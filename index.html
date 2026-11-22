@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Triagem de Jogadores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#2547A8;--purple:#8E3FB0;--g9:#0F2E22;--g7:#1F5D42;--g5:#2C7A57;--mint:#9FE0B8;--yel:#F5C518;--ora:#F3B562;
+--ink:#18212B;--ink2:#3B4651;--mut:#66727E;--mut2:#7A8591;--line:#E3E8ED;--line2:#EEF1F4;--bg:#EEF1F4;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button,select,input,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer}
+.appbar{height:46px;background:var(--g9);display:flex;align-items:center;padding:0 24px;color:#fff;gap:26px;position:sticky;top:0;z-index:20}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px}
+.logo i{width:26px;height:26px;border-radius:8px;background:var(--mint);display:grid;place-items:center;color:var(--g9);font-style:normal}
+.tabs{display:flex;gap:6px}.tabs a{padding:6px 14px;border-radius:8px;font-size:14px;color:#A9C4B6;font-weight:600;text-decoration:none}
+.tabs a.on{background:var(--g7);color:#fff}
+.user{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:#C9DDD2}.user b{color:#fff}
+.user img{width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--mint)}
+.view{display:none}.view.on{display:block}
+/* exploração */
+.wrap{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh / var(--z,1) - 46px)}
+.side{background:var(--g7);padding:14px 12px;position:sticky;top:46px;height:calc(100vh / var(--z,1) - 46px);display:flex;flex-direction:column}
+#metList{flex:1;overflow-y:auto;min-height:60px;margin:0 -4px;padding:0 4px}#metList::-webkit-scrollbar{width:6px}#metList::-webkit-scrollbar-thumb{background:rgba(255,255,255,.35);border-radius:3px}
+.addm{flex:none;margin-top:8px}
+.side h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#fff;margin:4px 2px 12px;display:flex;justify-content:space-between}
+.side h3 span{letter-spacing:0;text-transform:none;font-weight:600;color:var(--mint)}
+.f{background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.fr{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;gap:6px}
+.fr em{font-style:normal;font-size:11px;background:#E3F3E8;color:var(--g7);border-radius:6px;padding:2px 8px;font-weight:700;white-space:nowrap}
+.f small{display:block;font-size:10px;color:var(--mut2);margin-top:2px}
+.f select{width:100%;margin-top:8px;background:#F4F6F8;border:1px solid #D9DFE5;border-radius:8px;padding:7px 10px;font-weight:600}
+.f input[type=range]{width:100%;margin-top:6px;accent-color:var(--g5);height:14px}
+.f .hw{position:relative;margin-top:6px}.f .hw input{position:absolute;left:0;right:0;bottom:-6px;margin:0;opacity:0;cursor:pointer;height:30px}
+.dotm{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--g5);margin-right:6px;vertical-align:1px}
+.f.act{box-shadow:inset 3px 0 0 var(--g5),0 2px 6px rgba(0,0,0,.12)}
+.f .x{border:0;background:none;color:#9AA5B1;font-size:17px;line-height:1}
+.hist{display:flex;align-items:flex-end;gap:2px;height:22px}.hist i{flex:1;border-radius:2px 2px 0 0}
+.qk{display:flex;gap:3px}.qk button{white-space:nowrap;font-size:10px;font-weight:600;color:var(--mut);border:1px solid #D9DFE5;border-radius:5px;padding:1px 6px;background:#fff}
+.qk button.on{background:var(--g7);border-color:var(--g7);color:#fff}
+.stp{display:grid;grid-template-columns:34px 1fr 34px;margin-top:9px;border:1px solid #D9DFE5;border-radius:8px;overflow:hidden}
+.stp button{border:0;background:#F4F6F8;font-size:16px;color:var(--g7);font-weight:700}.stp input{border:0;text-align:center;font-weight:700;font-size:15px;width:100%;padding:5px 0}
+.addm{width:100%;border:1.5px dashed rgba(255,255,255,.55);border-radius:10px;padding:9px;background:transparent;color:#fff;font-weight:600}
+.addsel{width:100%;margin-top:6px;border-radius:8px;padding:7px;border:0;display:none}
+.main{padding:20px 22px;min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.k{background:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 1px 2px rgba(16,30,40,.06),0 4px 14px rgba(16,30,40,.05)}
+.k span{font-size:12px;color:var(--mut);font-weight:600}.k b{display:block;font-size:26px;font-weight:800;margin-top:2px}.k b small{font-size:13px;color:var(--mut);font-weight:600}
+.k.nv b{color:var(--navy)}.k.gq b{color:#24734A}
+.ctx{display:flex;gap:7px;margin-bottom:14px;align-items:center;font-size:12.5px;color:#4A5560;flex-wrap:wrap}
+.chip{background:#fff;border:1px solid #D9DFE5;border-radius:20px;padding:4px 11px;font-weight:600;color:var(--ink);font-size:12.5px}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) 560px;gap:16px;align-items:start}
+.row2>.card,.lcol>.card{display:flex;flex-direction:column}.lcol{display:flex;flex-direction:column;gap:14px;min-width:0}.row2>.card .tscroll{flex:1}
+.card{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(16,30,40,.06),0 6px 20px rgba(16,30,40,.06)}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px}
+.ch h2{font-size:16px;font-weight:800}.ch h2 em{font-style:normal;color:#8A95A0;font-weight:600;font-size:12px;margin-right:6px}.ch .s{font-size:12px;color:var(--mut)}
+.bt{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-weight:700;margin-bottom:8px}
+.tscroll{max-height:620px;overflow:auto;margin:0 -6px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut2);font-weight:700;padding:6px;text-align:left;position:sticky;top:0;background:#fff;z-index:1;white-space:nowrap}
+th.c,td.c{text-align:center}th.r,td.r{text-align:right}th.sort{cursor:pointer}th.sort:hover{color:var(--g7)}th .so{color:var(--navy)}
+td{white-space:nowrap;padding:5px 6px;border-top:1px solid var(--line2);vertical-align:middle}
+tbody tr{cursor:pointer}tbody tr:hover td{background:#F7F9FB}tr.on td,tr.on:hover td{background:#FFF6D6}tr.sel:hover td{background:#E6ECF9}
+tr.sel td{background:#EEF2FB}tr.sel td:first-child{box-shadow:inset 4px 0 0 var(--navy)}
+
+.who{display:flex;align-items:center;gap:9px;white-space:nowrap}.who b{display:block;font-weight:700}.who span{font-size:11.5px;color:var(--mut2)}
+.av{width:32px;height:32px;border-radius:50%;background:#E3E8ED;color:#4A5560;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+.av.m{background:var(--navy);color:#fff}.av.ring{box-shadow:0 0 0 3px #fff,0 0 0 6px var(--yel)}
+.pill{min-width:46px;margin:0 auto;border-radius:7px;padding:4px 0;text-align:center;line-height:1.1}.pill b{display:block;font-size:14px;font-weight:800}.pill span{font-size:10px;color:#3B4651}
+.pill.na{background:#F4F6F8;color:#9AA5B1}
+.tg{width:20px;height:20px;border-radius:6px;border:2px solid #B9C3CD;margin:0 auto;background:#fff;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800}
+.tg.on{background:var(--navy);border-color:var(--navy)}
+.sepr td{background:#F4F6F8!important;font-size:11px;font-weight:700;color:#66727E;text-transform:uppercase;letter-spacing:.05em;padding:6px 10px;cursor:default}
+.tag{font-size:11.5px;font-weight:700;border-radius:12px;padding:2px 9px;white-space:nowrap}
+.legend{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--mut);gap:10px;flex-wrap:wrap}
+.grad{display:inline-block;width:120px;height:9px;border-radius:5px;background:linear-gradient(90deg,#F06264,#fff 50%,#4CAF68);border:1px solid #D9DFE5;vertical-align:-1px;margin:0 6px}
+.btns{display:flex;gap:10px;margin-top:12px}.b1{flex:1;text-align:center;border-radius:10px;padding:10px;font-size:13.5px;font-weight:700;border:2px solid var(--navy);color:var(--navy);background:#fff}
+.b2{flex:1;text-align:center;border-radius:10px;padding:10px;font-size:13.5px;font-weight:700;border:0;background:var(--navy);color:#fff}
+.b1:disabled,.b2:disabled{opacity:.45;cursor:default}
+svg{font-family:Inter,Arial,sans-serif;display:block}
+.sleg{display:flex;gap:14px;font-size:11.5px;color:#4A5560;margin-top:2px;flex-wrap:wrap}.sleg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.warn{margin-top:6px;background:#FFF6E8;border-radius:8px;padding:7px 11px;font-size:12px;color:#6B4A12}
+.pc2{display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#A9D9BA,#C3E5CE);border:1px solid #6DB389;border-radius:10px;padding:5px 10px;line-height:1.2}
+.pc2 b{display:block;font-size:12.5px}.pc2 span{font-size:10.5px;color:#2F4F3E}
+.pc2 .st{display:flex;gap:10px;margin-left:6px;padding-left:10px;border-left:1px solid #6DB389}.pc2 .st div{font-size:9.5px;color:#2F4F3E;text-align:center}.pc2 .st i{display:block;font-style:normal;font-weight:800;font-size:13px;color:var(--ink)}
+.tip{position:fixed;pointer-events:none;background:#14261F;color:#CFE3D8;border-radius:8px;padding:8px 11px;font-size:12px;line-height:1.45;z-index:50;display:none}.tip b{color:#fff}
+/* análise */
+.page{padding:12px 24px;max-width:1560px;margin:0 auto}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px;gap:16px;flex:none}.hd h1{font-size:21px;font-weight:800}.hd p{font-size:13px;color:var(--mut);margin-top:3px}
+.seg{display:flex;background:#fff;border:1px solid #D9DFE5;border-radius:10px;padding:3px}.seg button{font-size:13px;padding:6px 13px;border-radius:7px;color:#4A5560;border:0;background:none;font-weight:700}.seg button.on{background:var(--g7);color:#fff}
+.pcs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;flex:none}
+.pcard{background:#fff;border-radius:12px;padding:8px 14px;display:flex;gap:14px;align-items:center;box-shadow:0 1px 2px rgba(16,30,40,.06),0 4px 14px rgba(16,30,40,.05)}
+.pcard .bigav{width:38px;height:38px;font-size:14px!important;margin:0;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;flex:none}
+.pcard .nm b{font-size:15.5px;font-weight:800;display:block;white-space:nowrap}.pcard .nm span{display:block;font-size:12px;color:var(--mut);white-space:nowrap}
+.pcard .stt{display:flex;gap:18px;margin-left:18px;padding-left:18px;border-left:1px solid var(--line)}.pcard .stt div{font-size:10.5px;color:var(--mut);line-height:1.1}.pcard .stt i{display:block;font-style:normal;font-size:16px;font-weight:800;color:var(--ink)}
+.pick{margin-left:auto;display:flex;flex-direction:row;gap:8px;align-items:center}
+.swb{border:1px solid #D9DFE5;background:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:600;color:#3B4651}
+.pick input{border:1px solid #D9DFE5;border-radius:8px;padding:6px 10px;width:230px;font-size:13px}
+.apg{height:calc(100vh / var(--z,1) - 46px);display:flex;flex-direction:column;padding-bottom:12px}
+.grid3{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch}
+.grid3>.card{min-height:0;overflow:hidden}.rcol{display:flex;flex-direction:column;gap:12px;min-height:0}
+#radar{flex:1;min-height:0;position:relative}#radar svg{position:absolute;inset:0;width:100%;height:100%;max-width:none!important}#aTab td{padding:2px 6px}#aTab .pill{padding:1px 0;line-height:1.05}#aTab .pill b{font-size:12.5px}#aTab .pill span{font-size:9.5px}#aTab th{padding:4px 6px}tr.sum td{padding:4px 6px!important}tr.sum td.c b{font-size:15px!important}.sr{padding:0;gap:8px;height:40px}#sim{min-height:120px}.sr .av{width:26px;height:26px;font-size:10px}.sr .who b{font-size:13px}.sr .who span{font-size:11px}.grid3 .card{padding:12px 16px}.grid3 .legend{margin-top:6px}.grid3 .ch{margin-bottom:6px}.grid3>.card{display:flex;flex-direction:column}
+.rlg{display:flex;justify-content:center;gap:18px;font-size:12.5px;color:#3B4651;margin-top:4px}.rlg i{display:inline-block;width:14px;height:10px;border-radius:3px;margin-right:6px}
+.hint{margin-top:10px;background:#FFF4E5;border-radius:8px;padding:8px 12px;font-size:12.5px;color:#6B4A12}
+.mets{display:flex;gap:4px;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;margin-top:6px;align-items:center;font-size:12px;color:var(--mut)}.mets span{font-size:11.5px;padding:2px 8px!important;background:#E6F2EA;border:1px solid #A9D6B8;color:var(--g7);border-radius:14px;padding:3px 10px;font-weight:600}
+.addb{align-self:flex-start;display:inline-block;margin-top:10px;border:2px dashed var(--navy);color:var(--navy);background:#EEF2FB;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700}
+.df{text-align:center;font-weight:700;font-size:12.5px}
+tr.sum td{background:#F4F6F8;border-top:2px solid #DDE2E7;padding:8px 6px}tr.sum td.c{font-size:13px;color:var(--mut)}tr.sum td.c b{font-size:17px;font-weight:800}
+.sr{display:grid;grid-template-columns:34px 1fr 140px 44px 70px;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line2);cursor:pointer}
+.sb{height:8px;background:var(--line2);border-radius:4px}.sb div{height:8px;border-radius:4px;background:var(--g5)}
+/* lista */
+.ord{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#4A5560}
+.oc{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #D9DFE5;border-radius:9px;padding:4px 8px}
+.oc em{font-style:normal;width:18px;height:18px;border-radius:50%;background:var(--g7);color:#fff;font-size:10.5px;display:grid;place-items:center;font-weight:700}
+.oc select{border:0;background:none;font-weight:700;font-size:13px}
+.opw{position:relative}.opw small{position:absolute;right:7px;top:-16px;font-size:11px;color:var(--mut2);font-weight:500}
+.lrow{display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:16px;align-items:stretch}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.cd{position:relative;background:#fff;border:1px solid var(--line);border-top:4px solid var(--yel);border-radius:12px;padding:14px 16px}
+.tl{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin:-4px -4px 6px 0}.vd{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--g7);background:#EAF5EE;border-radius:7px;padding:4px 9px;border:0}
+.xx{font-size:20px;line-height:1;color:var(--mut2);border:0;background:none}
+.chd{display:flex;gap:12px;align-items:center}.chd b{font-size:17px;display:block}.chd span{font-size:12.5px;color:var(--mut)}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 8px}.kv div{font-size:11.5px;color:var(--mut);line-height:1.3}.kv i{display:block;font-style:normal;font-size:22px;font-weight:800;color:var(--ink)}
+.mt{margin-top:8px}.mr{display:flex;justify-content:space-between;font-size:12px;color:#3B4651}.mr b{font-weight:700}.mr small{font-weight:400;color:var(--mut2)}
+.bw{position:relative;height:9px;background:var(--line2);border-radius:5px;margin-top:4px}.bf{height:9px;border-radius:5px}.mid{position:absolute;top:-3px;width:2px;height:15px;background:#93A0AC}
+.un{margin-top:10px;font-size:12.5px;color:#3B4651;line-height:1.4}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.why{margin-top:10px;background:#EEF5F0;border-left:3px solid var(--g7);border-radius:6px;padding:9px 11px}
+.why em{display:flex;justify-content:space-between;font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--g7);margin-bottom:4px}
+.why textarea{width:100%;border:1px solid transparent;background:transparent;resize:vertical;font-size:12.5px;line-height:1.45;color:#2F3B36;min-height:54px;text-align:justify;border-radius:6px;padding:2px}
+.why textarea:focus{outline:none;border-color:#A9D6B8;background:#fff}
+.edp{text-transform:none;letter-spacing:0;font-size:11px;color:var(--g7);border:1px solid #A9D6B8;border-radius:6px;padding:1px 7px;background:#fff}
+.ib{border:0;background:none;color:#B4BDC6;font-size:14px;padding:2px 4px;margin:0 1px;line-height:1}.ib:hover{color:#1F5D42}.ib.x2{font-size:17px}.ib.x2:hover{color:#C0392B}
+.foot2{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:16px}.foot2 .fn{font-size:12px;color:var(--mut2)}
+.exb{background:var(--g7);color:#fff;font-weight:700;font-size:14px;border-radius:10px;padding:11px 20px;box-shadow:0 4px 12px rgba(31,93,66,.3);border:0;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.empty{padding:40px;text-align:center;color:var(--mut)}
+/* detalhe */
+.back{font-size:13px;font-weight:600;color:var(--g7);border:0;background:none;margin-bottom:12px}
+.hero{display:flex;align-items:center;gap:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.hero .bigav{width:84px;height:84px;font-size:28px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-weight:800}
+.hero h2{font-size:26px;font-weight:800}.hero p{font-size:14px;color:var(--mut);margin-top:3px;white-space:nowrap}
+.hk{margin-left:auto;display:flex;gap:28px;align-items:flex-end}.hk div{font-size:12px;color:var(--mut)}.hk b{display:block;font-size:26px;font-weight:800;color:var(--ink)}
+.sts{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:16px 0}.st{background:#F4F6F8;border-radius:10px;padding:11px 13px}.st b{display:block;font-size:22px;font-weight:800}.st span{font-size:12px;color:var(--mut)}
+.two{display:grid;grid-template-columns:540px 1fr;gap:20px}
+.box{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.ia{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}.ia div{background:#F4F6F8;border-radius:10px;padding:10px 12px;position:relative}.ia b{display:block;font-size:20px;font-weight:800}.ia span{font-size:12px;color:var(--mut)}
+.cd2{position:absolute;right:12px;top:12px;width:13px;height:18px;border-radius:2px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#14261F;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;display:none;z-index:60}
+.src{font-size:11.5px;color:var(--mut2);margin-top:14px}
+
+#listPage.dmode{padding-top:10px;padding-bottom:10px}.dpg{height:calc(100vh / var(--z,1) - 66px);display:flex;flex-direction:column}
+.dcard{flex:1;min-height:0;display:flex;flex-direction:column;padding:12px 20px!important}
+.dcard .back{margin-bottom:4px;align-self:flex-start}.dcard .hero{padding-bottom:10px;gap:14px}.dcard .hero .bigav{width:58px;height:58px;font-size:20px}.dcard .hero h2{font-size:22px}.dcard .hero p{font-size:13px}
+.dcard .hk{gap:24px}.dcard .hk b{font-size:21px}.dcard .hk div{font-size:11px}
+.dcard .sts{margin:10px 0;gap:10px}.dcard .st{padding:7px 12px}.dcard .st b{font-size:18px}.dcard .st span{font-size:11px}
+.dcard .two{flex:1;min-height:0;grid-template-columns:1fr 1fr;gap:14px}
+.dcard .box{padding:10px 14px}#dRadar{flex:1;min-height:0;position:relative}#dRadar svg{position:absolute;inset:0;width:100%;height:100%;max-width:none!important}
+.dright{display:flex;flex-direction:column;gap:10px;min-height:0}.dright .mt{margin-top:5px}.dright .bw{height:7px;margin-top:2px}.dright .bf{height:7px}.dright .mid{height:13px}
+.dright .why{margin-top:0;padding:7px 10px}.dright .why textarea{font-size:12.5px;min-height:36px}
+.dright .ia{grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}.dright .ia div{padding:6px 10px}.dright .ia b{font-size:17px}
+#sim{padding-right:14px}
+html.noscr,html.noscr body{overflow:hidden}
+</style>
+</head>
+<body>
+<div class="appbar"><div class="logo"><i>◆</i>Triagem</div>
+<nav class="tabs"><a href="#exploracao" data-v="exploracao">Exploração</a><a href="#analise" data-v="analise">Análise</a><a href="#lista" data-v="lista">Lista curta</a></nav>
+<div class="user"><span><b>Rui</b> · analista de recrutamento</span><img src="data:image/jpeg;base64,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" alt=""></div></div>
+
+<section class="view" id="v-exploracao"><div class="wrap">
+<aside class="side"><h3>V1 · Filtros</h3>
+<div class="f"><div class="fr"><span>Posição</span></div><select id="fPos"><option value="DF">Defesa</option><option value="MF">Médio</option><option value="FW">Avançado</option><option value="GK">Guarda-redes</option></select></div>
+<div class="f"><div class="fr"><span>Minutos mínimos</span><em id="lMin"></em></div><input type="range" id="fMin" min="450" max="2500" step="50"></div>
+<div class="f"><div class="fr"><span>Custo máximo</span><em id="lCost"></em></div><input type="range" id="fCost" min="0" max="100" step="1"><small>valor de mercado (Transfermarkt)</small></div>
+<div class="f"><div class="fr"><span>Mostrar</span><span class="qk" id="qk"><button data-n="3">Top 3</button><button data-n="10">Top 10</button><button data-n="all">Todos</button></span></div>
+<div class="stp"><button id="nMinus">−</button><input id="nVal" type="text" inputmode="numeric"><button id="nPlus">+</button></div></div>
+<h3 style="margin-top:18px">Métricas da posição <span id="nAct"></span></h3>
+<div id="metList"></div>
+<button class="addm" id="addM">+ Adicionar métrica</button><select class="addsel" id="addSel"></select>
+</aside>
+<main class="main">
+<div class="kpis" id="kpis"></div>
+<div class="ctx" id="ctx"></div>
+<div class="row2">
+<div class="lcol"><section class="card" style="flex:1"><div class="ch"><h2><em>V4</em>Tabela de trabalho</h2><span class="s" id="tInfo"></span></div>
+<div class="tscroll"><table id="tWork"></table></div>
+<div class="legend"><span>Percentil 0<span class="grad"></span>100</span><span>Célula: percentil (grande) e valor por 90 min</span></div>
+<div class="btns"><button class="b1" id="goAna">Analisar 2 marcados</button><button class="b2" id="goList">Ver a lista curta →</button></div></section><section class="card" id="xCard" style="display:none"><div class="ch"><h2 style="font-size:14px">Marcados fora desta vista</h2><span class="s">desmarque na caixa para os tirar da lista</span></div><table id="tX"></table></section></div>
+<section class="card" id="scCard"><div class="ch" style="align-items:flex-start"><div><h2><em>V2</em>Rendimento × custo</h2><div class="s" id="sInfo"></div></div><div id="selCard"></div></div>
+<div id="scatter"></div>
+<div class="sleg"><span><i style="background:var(--navy)"></i>Marcados</span><span><i style="background:#59636E"></i>Na tabela</span><span><i style="background:#C9D0D8"></i>Restantes filtrados</span><span><i style="border:2px solid var(--navy)"></i>Selecionado</span></div>
+<div class="warn" id="noVal"></div></section>
+</div>
+
+</main></div></section>
+
+<section class="view" id="v-analise"><div class="page apg">
+<div class="hd"><div><h1 id="aTitle">Análise</h1><p id="aSub"></p></div><div class="ord"><span>Referência</span><div class="seg" id="refSeg"><button data-r="1" class="on">Média da posição</button><button data-r="0">Nenhuma</button></div></div></div>
+<div class="pcs" id="aCards"></div>
+<div class="grid3">
+<section class="card"><div class="ch"><h2><em>V3</em>Perfil em percentis</h2><span class="s">ordem dos eixos fixa · escala 0–100</span></div>
+<div id="radar"></div><div class="rlg" id="rlg"></div>
+
+<div class="mets" id="aMets"></div><button class="addb" id="aAdd">+ Adicionar métrica</button><select class="addsel" id="aAddSel" style="display:none;border:1px solid #D9DFE5;max-width:320px"></select></section>
+<div class="rcol">
+<section class="card" style="flex:none"><div class="ch"><h2>Valores e percentis</h2><span class="s">percentil (grande) · valor por 90 min · a soma dá o mesmo peso a todas</span></div><table id="aTab"></table>
+</section>
+<section class="card" style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column"><div class="ch"><h2 id="simT">Semelhantes</h2><span class="s">pelo perfil de percentis · clique para comparar</span></div><div id="sim" style="flex:1;min-height:0;overflow-y:auto"></div></section>
+</div></div></div></section>
+
+<section class="view" id="v-lista"><div class="page" id="listPage"></div></section>
+<div class="tip" id="tip"></div><div class="toast" id="toast"></div>
+
+<script>
+const IMG={R:"data:image/png;base64,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",L:"data:image/png;base64,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",B:"data:image/png;base64,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"};
+const FIELD=[
+ ['gls90','Golos','Finalizar'],['xg90','Golos esperados (xG)','Finalizar'],['sh90','Remates','Finalizar'],['sot90','Remates à baliza','Finalizar'],
+ ['sotp','% de remates à baliza','Finalizar',1],['gsh','Golos por remate','Finalizar',1],
+ ['ast90','Assistências','Criar'],['ga90','Golos + assistências','Criar'],['xag90','Assistências esperadas (xAG)','Criar'],['kp90','Passes para remate','Criar'],
+ ['ppa90','Passes para a área','Criar'],['crspa90','Cruzamentos para a área','Criar'],['tb90','Passes em profundidade','Criar'],['sca90','Ações que criam remate','Criar'],['gca90','Ações que criam golo','Criar'],
+ ['cmpp','% de passe certo','Reter',1],['prgp90','Passes progressivos','Progredir'],['third90','Passes para o último terço','Progredir'],['prgc90','Conduções progressivas','Progredir'],
+ ['cpa90','Conduções para a área','Progredir'],['prgr90','Receções progressivas','Progredir'],['attpen90','Toques na área adversária','Progredir'],
+ ['succ90','Dribles certos','Reter'],['succp','% de dribles certos','Reter',1],['lost90','Bolas perdidas','Reter',0,1],
+ ['tklw90','Desarmes ganhos','Defender'],['int90','Interceções','Defender'],['tklint90','Desarmes + interceções','Defender'],['tklp','% de dribladores desarmados','Defender',1],
+ ['recov90','Recuperações','Defender'],['blk90','Bloqueios','Defender'],['clr90','Alívios','Defender'],['won90','Duelos aéreos ganhos','Defender'],['wonp','% de duelos aéreos ganhos','Defender',1]];
+const GKM=[['gk_ga90','Golos sofridos','Guarda-redes',0,1],['gk_saves90','Defesas','Guarda-redes'],['gk_savep','% de defesas','Guarda-redes',1],['gk_csp','% de jogos sem sofrer','Guarda-redes',1],
+ ['gk_psxg90','Golos esperados pós-remate enfrentados','Guarda-redes'],['gk_psxgpm90','Golos evitados face ao esperado','Guarda-redes'],['gk_longp','% de passes longos certos','Guarda-redes',1],
+ ['gk_stpp','% de cruzamentos intercetados','Guarda-redes',1],['gk_opa90','Ações fora da área','Guarda-redes']];
+const MET={};for(const m of [...FIELD,...GKM])MET[m[0]]={k:m[0],label:m[1],fam:m[2],rate:!!m[3],inv:!!m[4]};
+const DEF={DF:['tklint90','won90','prgp90','cmpp','clr90'],MF:['prgp90','recov90','kp90','prgc90','won90','int90'],FW:['gls90','xg90','sot90','kp90','succ90','prgr90'],GK:['gk_savep','gk_psxgpm90','gk_csp','gk_stpp','gk_opa90','gk_longp']};
+const POSN={DF:['Defesa','defesas'],MF:['Médio','médios'],FW:['Avançado','avançados'],GK:['Guarda-redes','guarda-redes']};
+let D=[],COL={};
+const LS={get(k,d){try{const v=localStorage.getItem('triagem_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('triagem_'+k,JSON.stringify(v))}catch(e){}}};
+const S={onlyNV:false,pos:LS.get('pos','MF'),minMin:LS.get('minMin',900),cost:LS.get('cost',62),top:LS.get('top',7),mets:LS.get('mets',{}),marked:new Set(LS.get('marked',[])),
+ sel:null,sort:{k:'rend',d:-1},ana:[null,null],ref:1,anaExtra:[],open:new Set(),detail:null,obs:LS.get('obs',{}),o1:['rend',-1],o2:['value',1],o2on:true};
+for(const p in DEF)if(!S.mets[p])S.mets[p]=DEF[p].map(k=>({k,min:0}));
+const save=()=>{LS.set('pos',S.pos);LS.set('minMin',S.minMin);LS.set('cost',S.cost);LS.set('top',S.top);LS.set('mets',S.mets);LS.set('marked',[...S.marked]);LS.set('obs',S.obs)};
+const $=id=>document.getElementById(id);
+const fmt=(x,d=1)=>x==null||isNaN(x)?'—':x.toLocaleString('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fint=x=>x==null?'—':Math.round(x).toLocaleString('pt-PT');
+const costV=t=>t>=100?Infinity:Math.round(Math.pow(10,-0.7+t/100*3)*10)/10; // 0.2 .. 200
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function col(p){const a=[242,140,140],m=[255,255,255],b=[122,194,143];const t=p<50?p/50:(p-50)/50;const c=p<50?a.map((v,i)=>v+(m[i]-v)*t):m.map((v,i)=>v+(b[i]-v)*t);return '#'+c.map(v=>Math.round(v).toString(16).padStart(2,'0')).join('')}
+function bcol(p){let a,b,t;if(p>=50){a=[176,220,188];b=[60,160,95];t=(p-50)/50}else{a=[238,120,120];b=[245,175,170];t=p/50}return '#'+a.map((v,i)=>Math.round(v+(b[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+const ini=n=>n.split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const amostra=m=>m>=1800?['Boa','#2C7A57']:m>=1200?['Razoável','#B7791F']:['Curta','#C0392B'];
+const footImg=f=>f==='right'?IMG.R:f==='left'?IMG.L:f==='both'?IMG.B:null;
+const footTxt=f=>({right:'direito',left:'esquerdo',both:'ambos'})[f]||'—';
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600)}
+
+/* ---------- pools e percentis ---------- */
+const cache={};
+function pool(pos){const key=pos+'|'+S.minMin;if(cache[key])return cache[key];
+ const idx=D.map((r,i)=>i).filter(i=>D[i].pos===pos&&D[i].min>=S.minMin);
+ const keys=pos==='GK'?GKM.map(m=>m[0]):FIELD.map(m=>m[0]);const sorted={},mean={};
+ for(const k of keys){const v=idx.map(i=>D[i][k]).filter(x=>x!=null&&!isNaN(x)).sort((a,b)=>a-b);sorted[k]=v;mean[k]=v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
+ const P={idx,sorted,mean,pct:{}};cache[key]=P;return P}
+function pctOf(P,k,x){if(x==null||isNaN(x))return null;const v=P.sorted[k];if(!v||!v.length)return null;let lo=0,hi=v.length;while(lo<hi){const m=(lo+hi)>>1;if(v[m]<x)lo=m+1;else hi=m}let eq=lo;while(eq<v.length&&v[eq]===x)eq++;let p=(lo+(eq-lo)/2)/v.length*100;if(MET[k].inv)p=100-p;return Math.max(0,Math.min(100,Math.round(p)))}
+function pct(i,k){const r=D[i];const P=pool(r.pos);P.pct[k]=P.pct[k]||{};if(!(i in P.pct[k]))P.pct[k][i]=pctOf(P,k,r[k]);return P.pct[k][i]}
+const meanPct=(pos,k)=>{const P=pool(pos);return pctOf(P,k,P.mean[k])};
+const actK=pos=>S.mets[pos].map(m=>m.k);
+function rend(i,keys){keys=keys||actK(D[i].pos);const v=keys.map(k=>pct(i,k)).filter(x=>x!=null);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):null}
+function median(a){a=a.filter(x=>x!=null).sort((x,y)=>x-y);if(!a.length)return null;const m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2}
+
+/* ---------- exploração ---------- */
+function filtered(){const P=pool(S.pos);const cmax=costV(S.cost);const mets=S.mets[S.pos];
+ return P.idx.filter(i=>{const r=D[i];if(S.onlyNV&&r.value!=null)return false;if(r.value!=null&&r.value>cmax)return false;for(const m of mets){if(m.min>0){const p=pct(i,m.k);if(p==null||p<m.min)return false}}return true})}
+function renderSide(){$('fPos').value=S.pos;$('fMin').value=S.minMin;$('lMin').textContent='≥ '+fint(S.minMin);$('fCost').value=S.cost;const cv=costV(S.cost);$('lCost').textContent=cv===Infinity?'sem limite':'≤ '+fmt(cv,cv<10?1:0)+' M€';
+ document.querySelectorAll('#qk button').forEach(b=>b.classList.toggle('on',String(S.top)===b.dataset.n));$('nVal').value=S.top==='all'?'Todos':S.top;
+ const P=pool(S.pos);const mets=S.mets[S.pos];$('nAct').textContent=mets.length+' ativas';
+ $('metList').innerHTML=mets.map((m,j)=>{const v=P.sorted[m.k]||[];const bins=new Array(12).fill(0);
+  const lo=v.length?v[Math.floor(v.length*0.01)]:0,hi=v.length?v[Math.floor(v.length*0.99)-0]:1;const w=(hi-lo)/12||1;v.forEach(x=>{bins[Math.max(0,Math.min(11,Math.floor((x-lo)/w)))]++});const mx=Math.max(1,...bins);
+  const thr=m.min>0&&v.length?v[Math.min(v.length-1,Math.floor(v.length*m.min/100))]:-Infinity;const inv=MET[m.k].inv;
+  return `<div class="f act"><div class="fr"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0" title="${MET[m.k].label}"><i class="dotm"></i>${MET[m.k].label}</span><span style="display:flex;gap:6px;align-items:center"><em>≥ ${m.min}</em><button class="x" data-rm="${j}" title="Retirar">×</button></span></div><small>ativa · percentil mínimo${MET[m.k].rate?'':' · por 90 min'}</small>
+  <div class="hw"><div class="hist">${bins.map((b,i)=>{const c=lo+(i+0.5)*w;const on=m.min===0||(inv?c<=v[Math.max(0,v.length-1-Math.floor(v.length*m.min/100))]:c>=thr);return `<i style="height:${3+b/mx*23}px;background:${on?'#3E9A68':'#DDE3E8'}"></i>`}).join('')}</div>
+  <input type="range" min="0" max="95" step="5" value="${m.min}" data-mi="${j}" title="Arraste para definir o percentil mínimo"></div></div>`}).join('');
+ const cat=S.pos==='GK'?GKM:FIELD;$('addSel').innerHTML='<option value="">Escolher métrica…</option>'+cat.filter(m=>!mets.some(x=>x.k===m[0])).map(m=>`<option value="${m[0]}">${m[1]} (${m[2]})</option>`).join('')}
+function renderExplore(){renderSide();if((S.sel==null||D[S.sel].pos!==S.pos)){const m=[...S.marked].filter(i=>D[i].pos===S.pos);if(m.length)S.sel=m[0]}const P=pool(S.pos);const F=filtered();const keys=actK(S.pos);
+ const R={};F.forEach(i=>R[i]=rend(i));
+ const withV=F.filter(i=>D[i].value!=null);const mv=median(withV.map(i=>D[i].value)),mr=median(withV.map(i=>R[i]));
+ const meanV=withV.length?withV.reduce((a,i)=>a+D[i].value,0)/withV.length:null;const nq=withV.filter(i=>D[i].value<mv&&R[i]>mr).length;
+ const nm=[...S.marked].filter(i=>D[i]&&D[i].pos===S.pos).length;
+ $('kpis').innerHTML=`<div class="k"><span>${POSN[S.pos][1][0].toUpperCase()+POSN[S.pos][1].slice(1)} que passam os filtros${S.onlyNV?' (só sem valor)':''}</span><b>${F.length} <small>de ${P.idx.length} com ≥ ${fint(S.minMin)} min</small></b></div>
+ <div class="k nv"><span>Marcados para a lista curta</span><b>${nm}</b></div><div class="k"><span>Valor de mercado médio</span><b>${fmt(meanV)} <small>M€ nos filtrados</small></b></div>
+ <div class="k gq"><span>Rendimento alto · custo baixo</span><b>${nq} <small>no quadrante verde</small></b></div>`;
+ const cv=costV(S.cost);$('ctx').innerHTML='Filtros ativos: '+[POSN[S.pos][0],'≥ '+fint(S.minMin)+' min',cv===Infinity?'sem limite de custo':'≤ '+fmt(cv,cv<10?1:0)+' M€',...S.mets[S.pos].filter(m=>m.min>0).map(m=>MET[m.k].label+' ≥ '+m.min)].map(t=>`<span class="chip">${t}</span>`).join('')+`<span style="margin-left:auto">Percentis face aos ${POSN[S.pos][1]} com ≥ ${fint(S.minMin)} min · época 2024/25</span>`;
+ // tabela
+ let rows=[...F];const sk=S.sort.k;const sv=i=>sk==='rend'?R[i]:sk==='value'?D[i].value:sk==='min'?D[i].min:sk==='name'?D[i].name:pct(i,sk);
+ rows.sort((a,b)=>{const x=sv(a),y=sv(b);if(x==null)return 1;if(y==null)return -1;return (x<y?-1:x>y?1:0)*S.sort.d});
+ let shown=S.top==='all'?rows:rows.slice(0,+S.top);const extra=rows.filter(i=>S.marked.has(i)&&!shown.includes(i));const extraM=[...S.marked].filter(i=>D[i].pos===S.pos&&!F.includes(i));
+ const arrow=k=>S.sort.k===k?`<span class="so"> ${S.sort.d<0?'▼':'▲'}</span>`:'';
+ const rowH=i=>{const r=D[i];const mk=S.marked.has(i);return `<tr data-i="${i}" class="${S.sel===i?'sel':''}"><td><div class="tg ${mk?'on':''}" data-mk="${i}">${mk?'✓':''}</div></td><td><div class="who"><div class="av ${mk?'m':''}">${ini(r.name)}</div><div><b>${esc(r.name)}</b><span>${esc(r.club)} · ${r.age??'—'} anos</span></div></div></td><td class="r">${fint(r.min)}</td><td class="r"><b>${r.value==null?'—':fmt(r.value)+' M€'}</b></td>${keys.map(k=>cell(i,k)).join('')}<td><div class="pill" style="background:${(R[i]??rend(i))==null?'#F4F6F8':col(R[i]??rend(i))}"><b>${R[i]??rend(i)??'—'}</b></div></td></tr>`};
+ $('tWork').innerHTML=`<thead><tr><th></th><th class="sort" data-s="name">Jogador${arrow('name')}</th><th class="r sort" data-s="min">Min.${arrow('min')}</th><th class="r sort" data-s="value">Valor${arrow('value')}</th>${keys.map(k=>`<th class="c sort" data-s="${k}" title="${MET[k].label}">${short(k)}${arrow(k)}</th>`).join('')}<th class="c sort" data-s="rend">Rend.${arrow('rend')}</th></tr></thead><tbody>`+shown.map(rowH).join('')+'</tbody>';const out=[...extra,...extraM];$('xCard').style.display=out.length?'flex':'none';$('tX').innerHTML='<tbody>'+out.map(rowH).join('')+'</tbody>';
+ $('tInfo').textContent=(S.top==='all'?shown.length:('top '+shown.length+' de '+F.length))+' · ordenada por '+(sk==='rend'?'rendimento':sk==='value'?'valor':sk==='min'?'minutos':sk==='name'?'nome':MET[sk].label.toLowerCase());
+ const nmk=[...S.marked].filter(i=>D[i].pos===S.pos);$('goAna').disabled=nmk.length<2;$('goAna').textContent=nmk.length>=2?'Analisar 2 marcados':'Marque 2 para analisar';$('goList').textContent=`Enviar ${nmk.length} marcados para a lista curta →`;$('goList').disabled=!nmk.length;
+ // dispersão
+ $('sInfo').textContent=withV.length+' '+POSN[S.pos][1]+' com valor';
+ const sct=$('scatter').getBoundingClientRect().top/Z+window.scrollY/Z;const tH=document.querySelector('.lcol>.card').getBoundingClientRect().height/Z;const sh=Math.round(Math.max(280,Math.min(460,window.innerHeight/Z-sct-(nvCount(F,withV)?92:52),tH-(sct-document.querySelector('.row2').getBoundingClientRect().top/Z-window.scrollY/Z)-(nvCount(F,withV)?92:52))));$('scatter').innerHTML=scatterSVG(withV,R,mv,mr,{w:540,h:sh,shown:new Set(shown),interactive:true});
+ const nv=F.length-withV.length;$('noVal').style.display=nv?'block':'none';$('noVal').innerHTML=`${nv} ${POSN[S.pos][1]} sem valor de mercado não aparecem no gráfico · <a href="#" id="nvL" style="color:#2547A8;font-weight:700;text-decoration:none">${S.onlyNV?'Ver todos':'Ver lista'}</a>`;
+ requestAnimationFrame(()=>{const tc=document.querySelector('.lcol>.card');if(tc)$('scCard').style.minHeight=tc.offsetHeight+'px'});
+ $('selCard').innerHTML=S.sel!=null&&D[S.sel].pos===S.pos?`<div class="pc2"><div class="av m" style="width:26px;height:26px;font-size:10px">${ini(D[S.sel].name)}</div><div><b>${esc(D[S.sel].name)}</b><span>${esc(D[S.sel].club)} · ${D[S.sel].age} anos</span></div><div class="st"><div><i>${fint(D[S.sel].min)}</i>min</div><div><i>${D[S.sel].value==null?'—':fmt(D[S.sel].value)+' M€'}</i>valor</div><div><i style="color:#14532D">${rend(S.sel)??'—'}</i>rend.</div></div></div>`:'';
+}
+const nvCount=(F,W)=>F.length-W.length;
+function fitMets(){const e=$('aMets');if(!e)return;const sp=[...e.querySelectorAll('span')].sort((a,b)=>b.textContent.length-a.textContent.length);for(const x of sp){if(e.scrollWidth<=e.clientWidth+1)break;x.textContent=x.dataset.s}}
+function short(k){const s={gls90:'Golos',xg90:'xG',sh90:'Remates',sot90:'Rem. bal.',sotp:'% Rem. bal.',gsh:'Gol/rem.',ast90:'Assist.',ga90:'G+A',xag90:'xAG',kp90:'Passes rem.',ppa90:'Passes área',crspa90:'Cruz. área',tb90:'Profund.',sca90:'SCA',gca90:'GCA',cmpp:'% Passe',prgp90:'Passes prog.',third90:'Últ. terço',prgc90:'Cond. prog.',cpa90:'Cond. área',prgr90:'Rec. prog.',attpen90:'Toques área',succ90:'Dribles',succp:'% Dribles',lost90:'Perdas',tklw90:'Desarmes',int90:'Interc.',tklint90:'Des.+int.',tklp:'% Desarme',recov90:'Recup.',blk90:'Bloq.',clr90:'Alívios',won90:'Aéreos',wonp:'% Aéreos',gk_ga90:'Sofridos',gk_saves90:'Defesas',gk_savep:'% Def.',gk_csp:'% s/ sofrer',gk_psxg90:'PSxG',gk_psxgpm90:'Evitados',gk_longp:'% Longos',gk_stpp:'% Cruz.',gk_opa90:'Fora área'};return s[k]||k}
+function cell(i,k){const p=pct(i,k);const v=D[i][k];if(p==null)return `<td><div class="pill na"><b>—</b></div></td>`;return `<td><div class="pill" style="background:${col(p)}"><b>${p}</b><span>${fmt(v,MET[k].rate?1:2)}</span></div></td>`}
+function scatterSVG(pts,R,mv,mr,o){const W=o.w,H=o.h,L=52,Rr=14,T=10,B=48;const vals=pts.map(i=>D[i].value);const vmin=Math.max(0.05,Math.min(...vals,1)),vmax=Math.max(...vals,2);
+ const x0=Math.log10(vmin*0.8),x1=Math.log10(vmax*1.25);const X=v=>L+(Math.log10(v)-x0)/(x1-x0)*(W-L-Rr);const Y=r=>T+(1-r/100)*(H-T-B);
+ let s=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="max-width:${W}px">`;if(!pts.length)return s+`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="#7A8591" font-size="13">Nenhum jogador com valor nestes filtros</text></svg>`;
+ s+=`<rect x="${L}" y="${T}" width="${X(mv)-L}" height="${Y(mr)-T}" fill="#E8F4EC" rx="6"/><text x="${L+8}" y="${T+17}" font-size="11.5" font-weight="700" fill="#24734A">★ Rendimento alto · custo baixo</text>`;
+ [0.1,0.2,0.5,1,2,5,10,20,50,100,200].filter(t=>t>=vmin*0.8&&t<=vmax*1.25).forEach(t=>{s+=`<line x1="${X(t)}" x2="${X(t)}" y1="${T}" y2="${H-B}" stroke="#EEF1F4"/><text x="${X(t)}" y="${H-B+16}" text-anchor="middle" font-size="10.5" fill="#7A8591">${fmt(t,t<1?1:0)} M€</text>`});
+ [20,40,60,80].forEach(t=>{s+=`<line x1="${L}" x2="${W-Rr}" y1="${Y(t)}" y2="${Y(t)}" stroke="#EEF1F4"/><text x="${L-7}" y="${Y(t)+4}" text-anchor="end" font-size="10.5" fill="#7A8591">${t}</text>`});
+ s+=`<line x1="${X(mv)}" x2="${X(mv)}" y1="${T}" y2="${H-B}" stroke="#93A0AC" stroke-dasharray="4 4"/><line x1="${L}" x2="${W-Rr}" y1="${Y(mr)}" y2="${Y(mr)}" stroke="#93A0AC" stroke-dasharray="4 4"/>`;
+  s+=`<text x="${L+6}" y="${Y(mr)+14}" font-size="10" fill="#7A8591">mediana do rendimento</text><text x="${X(mv)+5}" y="${H-B-6}" font-size="10" fill="#7A8591">mediana do custo</text>`;s+=`<text x="${(L+W-Rr)/2}" y="${H-8}" text-anchor="middle" font-size="12" font-weight="700" fill="#3B4651">Valor de mercado · escala logarítmica →</text><text transform="translate(14 ${(T+H-B)/2}) rotate(-90)" text-anchor="middle" font-size="12" font-weight="700" fill="#3B4651">Rendimento · média dos percentis →</text>`;
+ const placed=[];const order=[...pts].sort((a,b)=>(S.marked.has(a)?1:0)-(S.marked.has(b)?1:0));
+ for(const i of order){const x=X(D[i].value),y=Y(R[i]??0),mk=S.marked.has(i);const hl=o.hl&&o.hl.has(i);const inT=o.shown?o.shown.has(i):true;
+  if(hl)s+=`<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="#F5C518" stroke-width="3.5"/>`;
+  if(o.interactive&&S.sel===i)s+=`<circle cx="${x}" cy="${y}" r="13" fill="#2547A8" fill-opacity=".12" stroke="#2547A8" stroke-width="2"/>`;
+  s+=`<circle class="pt" data-i="${i}" cx="${x}" cy="${y}" r="${mk?7:5}" fill="${mk?'#2547A8':inT?'#59636E':'#C9D0D8'}" stroke="#fff" stroke-width="${mk?2:1.2}" style="cursor:pointer"/>`;
+  if(mk&&o.labels!==false){const n=D[i].name.split(' ').slice(-1)[0];const w=n.length*6.4+16;let tx=Math.min(W-Rr-w,Math.max(L,x-w/2)),ty=y-30;
+   const hit=(a,b)=>a.x<b.x+b.w+2&&b.x<a.x+a.w+2&&a.y<b.y+21&&b.y<a.y+21;let tries=0;while(placed.some(p=>hit({x:tx,y:ty,w},p))&&tries<6){ty=tries%2?y-30-22*((tries+1)/2):y+11+22*(tries/2);tries++}
+   placed.push({x:tx,y:ty,w});s+=`<rect x="${tx}" y="${ty}" width="${w}" height="19" rx="9.5" fill="#2547A8"/><text x="${tx+w/2}" y="${ty+13}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">${esc(n)}</text>`}}
+ return s+'</svg>'}
+
+/* ---------- análise ---------- */
+function anaPair(){const m=[...S.marked].filter(i=>D[i].pos===S.pos);let [a,b]=S.ana;
+ if(a==null||D[a].pos!==S.pos)a=m[0]??null;if(b==null||D[b].pos!==S.pos||b===a)b=m.find(x=>x!==a)??null;
+ if(a==null){const F=filtered();F.sort((x,y)=>(rend(y)??0)-(rend(x)??0));a=F[0]??null;b=F[1]??null}if(b==null){const F=pool(S.pos).idx.filter(x=>x!==a);b=F[0]??null}S.ana=[a,b];return [a,b]}
+function radarKeys(){let k=[...actK(S.pos),...S.anaExtra.filter(x=>MET[x]&&(S.pos==='GK')===x.startsWith('gk_'))];k=[...new Set(k)];if(k.length<6)for(const d of [...DEF[S.pos],...(S.pos==='GK'?GKM:FIELD).map(m=>m[0])])if(!k.includes(d)&&k.length<6)k.push(d);return k.slice(0,10)}
+function radarSVG(keys,series,mean,W=600,H=500){const cx=W/2,cy=H/2,R=Math.max(40,Math.min(W/2-150,(H/2-20)/1.16)),n=keys.length;const ang=keys.map((_,i)=>-Math.PI/2+i*2*Math.PI/n);
+ const pt=(i,v)=>[cx+R*v/100*Math.cos(ang[i]),cy+R*v/100*Math.sin(ang[i])];const poly=vals=>vals.map((v,i)=>pt(i,v??0).map(x=>x.toFixed(1)).join(',')).join(' ');
+ let s=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="max-width:${W}px;margin:0 auto;display:block">`;for(const g of[25,50,75,100])s+=`<polygon points="${poly(keys.map(()=>g))}" fill="none" stroke="#E3E8ED"/>`;
+ keys.forEach((_,i)=>{const[x,y]=pt(i,100);s+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E3E8ED"/>`});[25,50,75,100].forEach(g=>{const[x,y]=pt(0,g);s+=`<text x="${x+5}" y="${y+4}" font-size="10" fill="#9AA5B1">${g}</text>`});
+ if(mean)s+=`<polygon points="${poly(mean)}" fill="#F3B562" fill-opacity=".18" stroke="#F3B562" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+ for(const[vals,c]of series){s+=`<polygon points="${poly(vals)}" fill="${c}" fill-opacity=".15" stroke="${c}" stroke-width="2.5"/>`;vals.forEach((v,i)=>{if(v==null)return;const[x,y]=pt(i,v);s+=`<circle cx="${x}" cy="${y}" r="4.5" fill="${c}" stroke="#fff" stroke-width="1.5"/>`})}
+ keys.forEach((k,i)=>{const[x,y]=pt(i,116);const c=Math.cos(ang[i]);const a=Math.abs(c)<.2?'middle':c>0?'start':'end';const ty=Math.abs(c)<.2?(Math.sin(ang[i])<0?-6:10):0;const lab=`<tspan dy="${ty}">${esc(MET[k].label)}</tspan>`;
+  s+=`<text x="${x}" y="${y+4}" text-anchor="${a}" font-size="12.5" font-weight="600" fill="#3B4651">${lab}</text>`});return s+'</svg>'}
+function fitRadar(){const el=$('radar');if(!el||!S._radar)return;const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;const[k,se,m]=S._radar;el.innerHTML=radarSVG(k,se,m,w,h)}
+try{new ResizeObserver(()=>{if(location.hash==='#analise')fitRadar()}).observe(document.getElementById('radar'))}catch(e){}
+window.addEventListener('resize',()=>{if(location.hash==='#lista')requestAnimationFrame(fitDR);if(location.hash==='#analise'){document.querySelectorAll('#aMets span').forEach(x=>x.textContent=x.title);requestAnimationFrame(()=>{fitRadar();fitMets()})}});
+function renderAnalise(){const[a,b]=anaPair();if(a==null){$('aCards').innerHTML='<div class="empty card">Sem jogadores nesta posição.</div>';return}
+ const keys=radarKeys();const P=pool(S.pos);$('aTitle').textContent=`Análise · ${D[a].name} vs ${b!=null?D[b].name:'—'}`;$('aSub').textContent=`Percentis face aos ${POSN[S.pos][1]} com ≥ ${fint(S.minMin)} min · época 2024/25`;
+ document.querySelectorAll('#refSeg button').forEach(x=>x.classList.toggle('on',+x.dataset.r===S.ref));
+ const names=P.idx.map(i=>`<option value="${esc(D[i].name)} · ${esc(D[i].club)}">`).join('');
+ const pc=(i,c,slot)=>i==null?'':`<div class="pcard" style="border-top:3px solid ${c}"><div class="bigav" style="background:${c}">${ini(D[i].name)}</div><div class="nm"><b>${esc(D[i].name)}</b><span>${esc(D[i].club)} · ${D[i].age} anos · ${POSN[S.pos][0]}</span></div>
+ <div class="stt"><div><i>${fint(D[i].min)}</i>min</div><div><i>${D[i].value==null?'—':fmt(D[i].value)+' M€'}</i>valor</div><div><i style="color:#1F6B42">${rend(i)??'—'}</i>rend.</div></div>
+ <div class="pick">${S.marked.has(i)?'<span class="tag" style="background:#2547A8;color:#fff">✓ Marcado</span>':`<button class="tag" data-mark="${i}" style="border:1px solid #2547A8;color:#2547A8;background:#fff">Marcar</button>`}<button class="swb" data-sw="${slot}">Trocar jogador ▾</button><input list="dl" placeholder="Escreva o nome…" data-slot="${slot}" style="display:none"></div></div>`;
+ $('aCards').innerHTML=pc(a,'#2547A8',0)+pc(b,'#8E3FB0',1)+`<datalist id="dl">${names}</datalist>`;
+ const va=keys.map(k=>pct(a,k)),vb=b!=null?keys.map(k=>pct(b,k)):null,mean=keys.map(k=>meanPct(S.pos,k));
+ const ser=[[va,'#2547A8'],...(vb?[[vb,'#8E3FB0']]:[])],rm=S.ref?mean:null;$('radar').innerHTML=radarSVG(keys,ser,rm,600,260);S._radar=[keys,ser,rm];
+ $('rlg').innerHTML=`<span><i style="background:#2547A8"></i>${esc(D[a].name)}</span>${b!=null?`<span><i style="background:#8E3FB0"></i>${esc(D[b].name)}</span>`:''}${S.ref?'<span><i style="background:#F3B562;opacity:.6"></i>Médio típico da posição</span>':''}`;
+ $('aMets').innerHTML='Métricas no radar: '+keys.map(k=>`<span title="${MET[k].label}" data-s="${short(k)}">${MET[k].label}</span>`).join('');fitMets();
+ const cat=S.pos==='GK'?GKM:FIELD;$('aAddSel').innerHTML='<option value="">Escolher métrica…</option>'+cat.filter(m=>!keys.includes(m[0])).map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
+ let wa=0,wb=0,sa=0,sb=0;const rows=keys.map((k,j)=>{const p1=va[j],p2=vb?vb[j]:null;if(p1!=null&&p2!=null){if(p1>p2)wa++;else if(p2>p1)wb++;sa+=p1;sb+=p2}
+  const d=p1!=null&&p2!=null?(p1===p2?'=':(p1>p2?`<span style="color:#2547A8">A +${p1-p2}</span>`:`<span style="color:#8E3FB0">B +${p2-p1}</span>`)):'—';
+  return `<tr><td style="font-weight:600">${MET[k].label}</td>${cell(a,k)}${b!=null?cell(b,k):'<td></td>'}<td class="df">${d}</td></tr>`}).join('');
+ const n=keys.length;$('aTab').innerHTML=`<thead><tr><th>Métrica</th><th class="c"><span style="color:#2547A8">●</span> A</th><th class="c"><span style="color:#8E3FB0">●</span> B</th><th class="c">Diferença</th></tr></thead><tbody>${rows}
+ <tr class="sum"><td style="font-weight:600">Métricas em que é melhor</td><td class="c"><b style="color:#2547A8">${wa}</b>/${n}</td><td class="c"><b style="color:#8E3FB0">${wb}</b>/${n}</td><td class="df">${wa===wb?'empate':wa>wb?'A':'B'}</td></tr>
+ <tr class="sum"><td style="font-weight:600">Soma dos percentis</td><td class="c"><b style="color:#2547A8">${sa}</b></td><td class="c"><b style="color:#8E3FB0">${sb}</b></td><td class="df">${sa===sb?'=':sa>sb?'A +'+(sa-sb):'B +'+(sb-sa)}</td></tr></tbody>`;
+ // semelhantes
+ const v0=keys.map(k=>pct(a,k));const sims=P.idx.filter(i=>i!==a).map(i=>{let d=0,c=0;keys.forEach((k,j)=>{const p=pct(i,k);if(p!=null&&v0[j]!=null){d+=(p-v0[j])**2;c++}});return[i,c?Math.sqrt(d/c):999]}).sort((x,y)=>x[1]-y[1]).slice(0,5);
+ $('simT').textContent='Semelhantes ao '+D[a].name;requestAnimationFrame(fitRadar);$('sim').innerHTML=sims.map(([i,d])=>{const s=Math.max(0,Math.round(100-d*1.4));return `<div class="sr" data-sim="${i}"><div class="av">${ini(D[i].name)}</div><div class="who"><div><b>${esc(D[i].name)}</b><span>${esc(D[i].club)} · ${D[i].age} anos</span></div></div><div class="sb"><div style="width:${s}%"></div></div><div style="font-size:12.5px;font-weight:700;color:#1F6B42">${s}%</div><div style="text-align:right;font-weight:700">${D[i].value==null?'—':fmt(D[i].value)+' M€'}</div></div>`}).join('')}
+
+/* ---------- lista curta ---------- */
+function listIdx(){const m=[...S.marked].filter(i=>D[i]&&D[i].pos===S.pos);const k=([key,dir])=>i=>key==='rend'?rend(i):key==='value'?D[i].value:key==='age'?D[i].age:D[i].min;
+ const f1=k(S.o1),f2=k(S.o2);return m.sort((a,b)=>{const c=(x,y,d)=>x==null?1:y==null?-1:(x<y?-1:x>y?1:0)*d;return c(f1(a),f1(b),S.o1[1])||(S.o2on?c(f2(a),f2(b),S.o2[1]):0)})}
+function bar(p,m){if(p==null)return `<div class="bw"></div>`;return `<div class="bw"><div class="bf" style="width:${p}%;background:${bcol(p)}"></div>${m!=null?`<div class="mid" style="left:${m}%"></div>`:''}</div>`}
+function obsDefault(i){const k=actK(D[i].pos);const ps=k.map(x=>[x,pct(i,x)]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]);if(!ps.length)return '';const t=ps[0],w=ps[ps.length-1];const a=amostra(D[i].min)[0];
+ return `Destaca-se em ${MET[t[0]].label.toLowerCase()} (melhor que ${t[1]}% dos ${POSN[D[i].pos][1]})${ps[1]?` e ${MET[ps[1][0]].label.toLowerCase()} (${ps[1][1]}%)`:''}. O ponto menos forte é ${MET[w[0]].label.toLowerCase()} (${w[1]}%). Amostra ${a.toLowerCase()}, com ${fint(D[i].min)} minutos.`}
+const getObs=i=>S.obs[D[i].name+'|'+D[i].club]??obsDefault(i);
+function cardHTML(i){const r=D[i];const k=actK(r.pos);const am=amostra(r.min);
+ return `<div class="cd"><div class="tl"><button class="vd" data-det="${i}">⤢ Ver em detalhe</button><button class="xx" data-close="${i}" title="Fechar">×</button></div>
+ <div class="chd"><div class="av m" style="width:52px;height:52px;font-size:17px">${ini(r.name)}</div><div><b>${esc(r.name)}</b><span>${esc(r.club)} · ${r.age} anos · ${POSN[r.pos][0]}</span></div></div>
+ <div class="kv"><div><i>${r.value==null?'—':fmt(r.value)+' M€'}</i>valor de mercado</div><div><i style="color:#1F6B42">${rend(i)??'—'}</i>rendimento <small style="display:block">(médio da posição: ${Math.round(median(pool(r.pos).idx.map(j=>rend(j)))??0)})</small></div></div>
+ ${k.map(x=>{const p=pct(i,x);return `<div class="mt"><div class="mr"><span>${MET[x].label}</span><b>${p==null?'—':'melhor que '+p+'%'}</b></div>${bar(p,meanPct(r.pos,x))}</div>`}).join('')}
+ <div class="un"><span class="dot" style="background:${am[1]}"></span>Amostra <b style="color:${am[1]}">${am[0]}</b> · ${fint(r.min)} min.</div>
+ <div class="why"><em>Observações <span class="edp">✎ Editar</span></em><textarea data-obs="${i}">${esc(getObs(i))}</textarea></div></div>`}
+function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg.classList.add('dmode');pg.innerHTML=detailHTML(S.detail);fitTA();requestAnimationFrame(fitDR);return}pg.classList.remove('dmode');
+ const L=listIdx();const P=pool(S.pos);const allR=P.idx.map(i=>rend(i));const vals=L.map(i=>D[i].value).filter(x=>x!=null);
+ const withV=P.idx.filter(i=>D[i].value!=null);const R={};withV.forEach(i=>R[i]=rend(i));const mv=median(withV.map(i=>D[i].value)),mr=median(withV.map(i=>R[i]));
+ const meanV=withV.reduce((a,i)=>a+D[i].value,0)/Math.max(1,withV.length);const o=(id,[k,d])=>`<select data-o="${id}k">${[['rend','Rendimento'],['value','Valor'],['age','Idade'],['min','Minutos']].map(([v,t])=>`<option value="${v}" ${v===k?'selected':''}>${t}</option>`).join('')}</select><select data-o="${id}d"><option value="-1" ${d<0?'selected':''}>maior → menor</option><option value="1" ${d>0?'selected':''}>menor → maior</option></select>`;
+ const ord=`<div class="ord"><span>Ordenar</span><div class="oc"><em>1</em>${o(1,S.o1)}</div>${S.o2on?`<div class="opw"><small>(opcional)</small><div class="oc"><em>2</em>${o(2,S.o2)}</div></div><button class="xx" id="o2x" title="Retirar">×</button>`:`<button class="tag" id="o2add" style="border:1px dashed #9AA5B1;background:#fff">+ segundo critério</button>`}</div>`;
+ if(!L.length){pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>Lista a apresentar ao Carlos, diretor desportivo · época 2024/25</p></div></div><div class="card empty">Ainda não marcou ${POSN[S.pos][1]}. Na Exploração, marque os candidatos na tabela de trabalho.</div>`;return}
+ const hl=new Set([...S.open]);const cv=costV(S.cost);
+ pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>Lista a apresentar ao Carlos, diretor desportivo · época 2024/25</p></div>${ord}</div>
+ <div class="kpis"><div class="k nv"><span>Candidatos</span><b>${L.length} <small>de ${P.idx.length} ${POSN[S.pos][1]} analisados</small></b></div><div class="k"><span>Valor de mercado dos candidatos</span><b>${vals.length?fmt(Math.min(...vals))+' – '+fmt(Math.max(...vals)):'—'} <small>M€</small></b></div><div class="k"><span>Valor de mercado médio da posição</span><b>${fmt(meanV)} <small>M€</small></b></div><div class="k"><span>Rendimento mediano da posição</span><b>${Math.round(median(allR)??0)} <small>percentil médio</small></b></div></div>
+ <div class="ctx"><b style="color:var(--ink);margin-right:4px">Como se chegou a esta lista:</b>${[POSN[S.pos][0],'≥ '+fint(S.minMin)+' min',cv===Infinity?'sem limite de custo':'≤ '+fmt(cv,cv<10?1:0)+' M€',...S.mets[S.pos].filter(m=>m.min>0).map(m=>MET[m.k].label+' ≥ '+m.min)].map(t=>`<span class="chip">${t}</span>`).join('')}<span style="margin-left:auto">Rendimento: ${actK(S.pos).map(k=>MET[k].label.toLowerCase()).join(', ')}</span></div>
+ <div class="lrow"><section class="card"><div class="bt">Os ${L.length} candidatos</div><table><thead><tr><th>Jogador</th><th class="c">Pé preferido</th><th class="r">Idade</th><th class="r">Valor</th><th class="c">Rendimento</th><th class="c">Amostra</th><th class="c"></th></tr></thead><tbody>
+ ${L.map(i=>{const r=D[i];const am=amostra(r.min);const fi=footImg(r.foot);const on=S.open.has(i);return `<tr data-open="${i}" class="${on?'on':''}"><td style="padding:12px 6px"><div class="who"><div class="av m ${on?'ring':''}">${ini(r.name)}</div><div><b>${esc(r.name)}</b><span>${esc(r.club)}</span></div></div></td><td class="c">${fi?`<img src="${fi}" alt="${footTxt(r.foot)}" title="Pé ${footTxt(r.foot)}" style="height:24px;display:inline-block">`:'—'}</td><td class="r">${r.age}</td><td class="r"><b>${r.value==null?'—':fmt(r.value)+' M€'}</b></td><td><div class="pill" style="width:58px;background:${col(rend(i)??0)}"><b>${rend(i)??'—'}</b></div></td><td class="c"><span class="tag" style="color:${am[1]};background:${am[1]}1A">${am[0]}</span></td><td class="r" style="white-space:nowrap;padding-right:0;width:1%"><button class="ib" data-det="${i}" title="Ver em detalhe">⤢</button><button class="ib x2" data-unmark="${i}" title="Tirar da lista">×</button></td></tr>`}).join('')}
+ </tbody></table><div class="hint" style="background:#F4F6F8;color:#4A5560">Clique num jogador, na tabela ou no gráfico, para abrir a sua ficha.</div></section>
+ <section class="card"><div class="bt">Onde ficam face aos outros ${POSN[S.pos][1]}</div><div id="lsc">${scatterSVG(withV,R,mv,mr,{w:500,h:400,hl,labels:true,shown:new Set()})}</div>
+ <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>Outros ${POSN[S.pos][1]}</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: médio típico</span></div></section></div>
+ ${S.open.size?`<div class="cards" style="grid-template-columns:repeat(${Math.min(4,Math.max(2,S.open.size))},minmax(0,1fr))">${L.filter(i=>S.open.has(i)).map(cardHTML).join('')}</div>`:''}
+ <div class="foot2"><span></span><button class="exb" id="exp">${expIcon()} Exportar lista</button></div>`;fitTA()}
+const fitTA=()=>requestAnimationFrame(()=>document.querySelectorAll('.why textarea').forEach(t=>{t.style.height='auto';t.style.height=(t.scrollHeight+4)+'px'}));
+const expIcon=()=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>`;
+function detailHTML(i){const r=D[i];const keys=radarKeys();const vals=keys.map(k=>pct(i,k)),mean=keys.map(k=>meanPct(r.pos,k));const am=amostra(r.min);const fi=footImg(r.foot);
+ S._dr=[keys,[[vals,'#2547A8']],mean];
+ return `<div class="dpg"><div class="card dcard"><button class="back" id="back">← Voltar à lista curta</button>
+ <div class="hero"><div class="bigav">${ini(r.name)}</div><div><h2>${esc(r.name)}</h2><p>${esc(r.club)} · ${r.age} anos · ${POSN[r.pos][0]}${r.height?' · '+fmt(r.height/100,2)+' m':''}</p></div>${fi?`<img src="${fi}" alt="Pé ${footTxt(r.foot)}" title="Pé preferido: ${footTxt(r.foot)}" style="height:44px;margin-left:20px">`:''}
+ <div class="hk"><div><b>${r.value==null?'—':fmt(r.value)+' M€'}</b>valor de mercado</div><div><b style="color:#1F6B42">${rend(i)??'—'}</b>rendimento (médio: ${Math.round(median(pool(r.pos).idx.map(j=>rend(j)))??0)})</div><div><b style="color:${am[1]};font-size:18px">● ${am[0]}</b>amostra · ${fint(r.min)} min</div></div></div>
+ <div class="sts">${[[r.mp,'jogos'],[r.starts,'como titular'],[r.min,'minutos'],[r.gls,'golos'],[r.ast,'assistências']].map(([v,t])=>`<div class="st"><b>${fint(v)}</b><span>${t}</span></div>`).join('')}</div>
+ <div class="two"><div class="box" style="display:flex;flex-direction:column;min-height:0"><div class="bt">Perfil face ao médio típico da posição</div><div id="dRadar"></div><div class="rlg"><span><i style="background:#2547A8"></i>${esc(r.name)}</span><span><i style="background:#F3B562;opacity:.6"></i>Médio típico da posição</span></div></div>
+ <div class="dright"><div class="box"><div class="bt">Comparação com os ${POSN[r.pos][1]} analisados</div>${keys.map((k,j)=>`<div class="mt"><div class="mr"><span>${MET[k].label}</span><b>${vals[j]==null?'—':'melhor que '+vals[j]+'%'} <small>· ${fmt(r[k],MET[k].rate?1:2)}${MET[k].rate?'':' por 90 min'}</small></b></div>${bar(vals[j],mean[j])}</div>`).join('')}</div>
+ <div class="why"><em>Observações <span class="edp">✎ Editar</span></em><textarea data-obs="${i}">${esc(getObs(i))}</textarea></div>
+ <div class="box"><div class="bt">Informações adicionais</div><div class="ia"><div><i class="cd2" style="background:#E0B000"></i><b>${fint(r.crdy)}</b><span>cartões amarelos</span></div><div><i class="cd2" style="background:#C0392B"></i><b>${fint(r.crdr)}</b><span>cartões vermelhos</span></div></div></div></div></div></div>
+ <div class="foot2" style="margin-top:8px"><span></span><button class="exb" id="exp">${expIcon()} Exportar lista</button></div></div>`}
+function fitDR(){const el=$('dRadar');if(!el||!S._dr)return;const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;const[k,se,m]=S._dr;el.innerHTML=radarSVG(k,se,m,w,h)}
+
+/* ---------- exportação ---------- */
+function exportHTML(){const L=listIdx();const P=pool(S.pos);const withV=P.idx.filter(i=>D[i].value!=null);const R={};withV.forEach(i=>R[i]=rend(i));const mv=median(withV.map(i=>D[i].value)),mr=median(withV.map(i=>R[i]));
+ const keys=actK(S.pos);const sc=scatterSVG(withV,R,mv,mr,{w:620,h:420,labels:true}).replace(/class="pt"[^/]*?style="cursor:pointer"/g,'');
+ const css=`body{font-family:Inter,Arial,sans-serif;color:#18212B;max-width:1100px;margin:0 auto;padding:24px;background:#fff}h1{font-size:26px;margin:6px 0}p{color:#4A5560;font-size:14px}.hd{background:#1F5D42;color:#fff;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;font-size:13px}table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}th{text-align:left;font-size:11px;text-transform:uppercase;color:#7A8591;border-bottom:2px solid #E3E8ED;padding:6px}td{padding:8px 6px;border-bottom:1px solid #EEF1F4}.c{text-align:center}.r{text-align:right}.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.cd{border:1px solid #E3E8ED;border-top:4px solid #2547A8;border-radius:10px;padding:12px 14px;break-inside:avoid}.mr{display:flex;justify-content:space-between;font-size:12px;margin-top:7px}.bw{position:relative;height:8px;background:#EEF1F4;border-radius:4px;margin-top:3px}.bf{height:8px;border-radius:4px}.mid{position:absolute;top:-3px;width:2px;height:14px;background:#93A0AC}.why{margin-top:10px;background:#EEF5F0;border-left:3px solid #1F5D42;padding:8px 10px;font-size:13px;text-align:justify}.why b{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:#1F5D42;margin-bottom:3px}.ft{margin-top:18px;font-size:12px;color:#66727E;border-top:1px solid #E3E8ED;padding-top:10px}`;
+ const card=i=>{const r=D[i];const am=amostra(r.min);return `<div class="cd"><b style="font-size:17px">${esc(r.name)}</b><div style="font-size:12.5px;color:#66727E">${esc(r.club)} · ${r.age} anos · ${POSN[r.pos][0]} · pé ${footTxt(r.foot)}${r.height?' · '+fmt(r.height/100,2)+' m':''}</div><div style="display:flex;gap:30px;margin:8px 0"><div><b style="font-size:20px">${r.value==null?'—':fmt(r.value)+' M€'}</b><div style="font-size:11px;color:#66727E">valor de mercado</div></div><div><b style="font-size:20px;color:#1F6B42">${rend(i)}</b><div style="font-size:11px;color:#66727E">rendimento</div></div><div><b style="font-size:20px;color:${am[1]}">${am[0]}</b><div style="font-size:11px;color:#66727E">amostra · ${fint(r.min)} min</div></div></div>${keys.map(k=>{const p=pct(i,k);return `<div class="mr"><span>${MET[k].label}</span><b>${p==null?'—':'melhor que '+p+'%'}</b></div>${bar(p,meanPct(r.pos,k))}`}).join('')}<div style="font-size:12px;margin-top:8px;color:#3B4651">${fint(r.mp)} jogos (${fint(r.starts)} a titular) · ${fint(r.gls)} golos · ${fint(r.ast)} assistências · ${fint(r.crdy)} amarelos · ${fint(r.crdr)} vermelhos${r.contract?' · contrato até '+r.contract.split('-').reverse().join('/'):''}</div><div class="why"><b>Observações</b>${esc(getObs(i))}</div></div>`};
+ return `<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><title>Lista curta · ${POSN[S.pos][0]}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><style>${css}</style></head><body>
+ <div class="hd"><b>Triagem · Lista curta para decisão</b><span>Preparada por Rui (analista de recrutamento) para Carlos (diretor desportivo) · época 2024/25</span></div>
+ <h1>${L.length} ${L.length===1?POSN[S.pos][0].toLowerCase():POSN[S.pos][1]} propostos para observação presencial</h1><p>Foram analisados <b>${P.idx.length} ${POSN[S.pos][1]}</b> das cinco grandes ligas com pelo menos ${fint(S.minMin)} minutos. O rendimento é a média dos percentis em: ${keys.map(k=>MET[k].label.toLowerCase()).join(', ')}.</p>
+ <table><thead><tr><th>Jogador</th><th class="c">Pé</th><th class="r">Idade</th><th class="r">Valor</th><th class="r">Rendimento</th><th class="c">Amostra</th></tr></thead><tbody>${L.map(i=>{const r=D[i];const am=amostra(r.min);return `<tr><td><b>${esc(r.name)}</b><br><span style="font-size:12px;color:#7A8591">${esc(r.club)}</span></td><td class="c">${footTxt(r.foot)}</td><td class="r">${r.age}</td><td class="r"><b>${r.value==null?'—':fmt(r.value)+' M€'}</b></td><td class="r"><b>${rend(i)}</b></td><td class="c" style="color:${am[1]};font-weight:700">${am[0]}</td></tr>`}).join('')}</tbody></table>
+ <h3 style="margin-top:20px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#66727E">Onde ficam face aos outros ${POSN[S.pos][1]}</h3>${sc}
+ <div class="cards">${L.map(card).join('')}</div>
+ <div class="ft">O valor de mercado é uma estimativa da Transfermarkt e não inclui salários nem comissões. Estatísticas de uma só época (2024/25), FBref. «Melhor que X%» compara com os ${POSN[S.pos][1]} analisados; o traço cinzento marca o médio típico da posição. A ordem da lista não indica preferência.</div></body></html>`}
+let DL=null;
+async function doExport(){const html=exportHTML();if(!DL){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download=`lista_curta_${POSN[S.pos][1].replace(/[^a-z]/gi,'_')}.html`;document.body.appendChild(a);a.click();a.remove();toast('Lista exportada.');return}
+ try{await DL.save({filename:`lista_curta_${POSN[S.pos][1].replace(/[^a-z]/gi,'_')}.html`,data:html});toast('Lista exportada.')}catch(e){if(e&&e.code==='declined')return;toast('Não foi possível exportar a lista.')}}
+
+/* ---------- eventos ---------- */
+function route(){const v=(location.hash||'#exploracao').slice(1);const ok=['exploracao','analise','lista'].includes(v)?v:'exploracao';
+ document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.v===ok));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+ok));
+ if(ok==='exploracao')renderExplore();else if(ok==='analise')renderAnalise();else renderLista();}
+function chkScr(){const h=document.documentElement;h.classList.remove('noscr');requestAnimationFrame(()=>{if(h.scrollHeight-innerHeight<=12)h.classList.add('noscr')})}
+function rerender(){save();route()}
+function bind(){
+ window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0)});
+ $('fPos').onchange=e=>{S.pos=e.target.value;S.sel=null;S.sort={k:'rend',d:-1};S.open.clear();S.detail=null;rerender()};
+ $('fMin').oninput=e=>{S.minMin=+e.target.value;$('lMin').textContent='≥ '+fint(S.minMin)};$('fMin').onchange=()=>rerender();
+ $('fCost').oninput=e=>{S.cost=+e.target.value;const cv=costV(S.cost);$('lCost').textContent=cv===Infinity?'sem limite':'≤ '+fmt(cv,cv<10?1:0)+' M€'};$('fCost').onchange=()=>rerender();
+ $('qk').onclick=e=>{const n=e.target.dataset.n;if(!n)return;S.top=n==='all'?'all':+n;rerender()};
+ $('nMinus').onclick=()=>{const v=S.top==='all'?filtered().length:S.top;S.top=Math.max(1,v-1);rerender()};$('nPlus').onclick=()=>{const v=S.top==='all'?0:S.top;S.top=v+1;rerender()};
+ $('nVal').onchange=e=>{const n=parseInt(e.target.value);S.top=isNaN(n)||n<1?'all':n;rerender()};
+ $('metList').addEventListener('input',e=>{const j=e.target.dataset.mi;if(j==null)return;S.mets[S.pos][j].min=+e.target.value;e.target.closest('.f').querySelector('em').textContent='≥ '+e.target.value});
+ $('metList').addEventListener('change',e=>{if(e.target.dataset.mi!=null)rerender()});
+ $('metList').addEventListener('click',e=>{const j=e.target.dataset.rm;if(j==null)return;if(S.mets[S.pos].length<=2){toast('Mantenha pelo menos duas métricas ativas.');return}S.mets[S.pos].splice(+j,1);if(S.sort.k!=='rend'&&!actK(S.pos).includes(S.sort.k))S.sort={k:'rend',d:-1};rerender()});
+ $('addM').onclick=()=>{const s=$('addSel');s.style.display=s.style.display==='block'?'none':'block'};
+ $('addSel').onchange=e=>{if(!e.target.value)return;S.mets[S.pos].push({k:e.target.value,min:0});e.target.style.display='none';rerender()};
+ $('tWork').addEventListener('click',e=>{const th=e.target.closest('th.sort');if(th){const k=th.dataset.s;S.sort=S.sort.k===k?{k,d:-S.sort.d}:{k,d:k==='name'?1:-1};rerender();return}
+  const mk=e.target.closest('[data-mk]');if(mk){const i=+mk.dataset.mk;S.marked.has(i)?S.marked.delete(i):S.marked.add(i);S.open.delete(i);rerender();return}
+  const tr=e.target.closest('tr[data-i]');if(tr){const i=+tr.dataset.i;S.sel=S.sel===i?null:i;renderExplore()}});
+ $('tX').addEventListener('click',e=>{const mk=e.target.closest('[data-mk]');if(mk){const i=+mk.dataset.mk;S.marked.delete(i);S.open.delete(i);if(S.sel===i)S.sel=null;rerender();return}const tr=e.target.closest('tr[data-i]');if(tr){S.sel=+tr.dataset.i;renderExplore()}});
+ const tip=$('tip');document.addEventListener('mousemove',e=>{const p=e.target.closest&&e.target.closest('.pt');if(!p){tip.style.display='none';return}const i=+p.dataset.i,r=D[i];
+  tip.innerHTML=`<b>${esc(r.name)}</b> · ${esc(r.club)}<br>${r.age} anos · ${fint(r.min)} min · ${r.value==null?'—':fmt(r.value)+' M€'}<br>Rendimento ${rend(i)??'—'}${S.marked.has(i)?' · marcado':''}`;tip.style.display='block';tip.style.left=(e.clientX/Z+14)+'px';tip.style.top=(e.clientY/Z+14)+'px'});
+ $('scatter').addEventListener('click',e=>{const p=e.target.closest('.pt');if(!p)return;const i=+p.dataset.i;S.sel=S.sel===i?null:i;renderExplore()});
+ $('noVal').addEventListener('click',e=>{if(e.target.id!=='nvL')return;e.preventDefault();S.onlyNV=!S.onlyNV;renderExplore()});
+ $('goAna').onclick=()=>{const m=[...S.marked].filter(i=>D[i].pos===S.pos);S.ana=[m[0],m[1]];location.hash='#analise'};
+ $('goList').onclick=()=>{S.detail=null;location.hash='#lista'};
+ $('refSeg').onclick=e=>{const r=e.target.dataset.r;if(r==null)return;S.ref=+r;renderAnalise()};
+ $('aCards').addEventListener('change',e=>{const s=e.target.dataset.slot;if(s==null)return;const v=e.target.value;const i=pool(S.pos).idx.find(j=>`${D[j].name} · ${D[j].club}`===v);if(i==null){toast('Jogador não encontrado nesta posição.');return}S.ana[+s]=i;renderAnalise()});
+ $('aCards').addEventListener('click',e=>{const sw=e.target.dataset.sw;if(sw!=null){const inp=e.target.parentNode.querySelector('input');inp.style.display='block';e.target.style.display='none';inp.focus();return}const m=e.target.dataset.mark;if(m==null)return;S.marked.add(+m);save();renderAnalise()});
+ $('sim').addEventListener('click',e=>{const r=e.target.closest('[data-sim]');if(!r)return;S.ana[1]=+r.dataset.sim;renderAnalise()});
+ $('aAdd').onclick=()=>{const s=$('aAddSel');s.style.display=s.style.display==='block'?'none':'block'};
+ $('aAddSel').onchange=e=>{if(!e.target.value)return;S.anaExtra.push(e.target.value);e.target.style.display='none';renderAnalise()};
+ const lp=$('listPage');
+ lp.addEventListener('click',e=>{const t=e.target;
+  if(t.closest('#exp')){doExport();return}if(t.closest('#back')){S.detail=null;route();return}
+  if(t.closest('#o2x')){S.o2on=false;renderLista();return}if(t.closest('#o2add')){S.o2on=true;renderLista();return}
+  const um=t.closest('[data-unmark]');if(um){const i=+um.dataset.unmark;S.marked.delete(i);S.open.delete(i);save();renderLista();toast(D[i].name+' saiu da lista curta.');return}
+  const det=t.closest('[data-det]');if(det){S.detail=+det.dataset.det;route();window.scrollTo(0,0);return}
+  const cl=t.closest('[data-close]');if(cl){S.open.delete(+cl.dataset.close);renderLista();return}
+  const pt=t.closest('.pt');const tr=t.closest('tr[data-open]');const i=pt?+pt.dataset.i:tr?+tr.dataset.open:null;
+  if(i!=null&&S.marked.has(i)){S.open.has(i)?S.open.delete(i):S.open.add(i);renderLista()}});
+ lp.addEventListener('change',e=>{const o=e.target.dataset.o;if(!o)return;const n=+o[0],f=o[1];const tgt=n===1?S.o1:S.o2;if(f==='k')tgt[0]=e.target.value;else tgt[1]=+e.target.value;renderLista()});
+ lp.addEventListener('input',e=>{const i=e.target.dataset.obs;if(i==null)return;e.target.style.height='auto';e.target.style.height=(e.target.scrollHeight+4)+'px';const r=D[+i];S.obs[r.name+'|'+r.club]=e.target.value;save()});
+}
+async function init(){try{const res=await fetch('data.json');const j=await res.json();COL=j.cols;D=j.rows.map(r=>{const o={};j.cols.forEach((c,k)=>o[c]=r[k]);return o})}catch(e){document.body.insertAdjacentHTML('beforeend','<div class="toast" style="display:block">Não foi possível carregar os dados.</div>');return}
+ bind();route();try{const c=window.claude&&window.claude.use?window.claude.use('downloads'):null;if(c)c.then(x=>{DL=x}).catch(()=>{})}catch(e){}}
+let Z=1;function fit(){Z=Math.max(0.55,Math.min(1,window.innerWidth/1640));document.documentElement.style.zoom=Z;document.documentElement.style.setProperty('--z',Z)}
+window.addEventListener('resize',()=>{fit();chkScr();clearTimeout(fit.t);fit.t=setTimeout(()=>{if((location.hash||'#exploracao')==='#exploracao'&&D.length)renderExplore()},150)});fit();
+init();
+
+['renderExplore','renderAnalise','renderLista'].forEach(n=>{const f=window[n];window[n]=function(){const r=f.apply(this,arguments);chkScr();return r}});
+</script>
+</body></html>
