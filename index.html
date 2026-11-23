@@ -209,12 +209,12 @@ html.mob .rsz{width:30px;right:-12px}html.mob .rsz::after{left:13px}
 
 .wrap{display:block!important}
 .side{position:fixed!important;left:0;top:46px;bottom:0;height:auto!important;width:316px;z-index:40;overflow-y:auto;transform:translateX(-105%);transition:transform .25s ease;box-shadow:8px 0 28px rgba(0,0,0,.28);padding:14px 14px 18px}
-.side.open{transform:none}.side #metList{flex:none;overflow:visible;max-height:none}
+.side.open{transform:none}.side #metList{flex:none;overflow-y:auto;padding-right:6px}html.mob .side #metList{overflow-y:auto}
 .side h3:first-child{display:flex;justify-content:space-between;align-items:center}.sdx{background:transparent;border:0;color:#fff;font-size:22px;line-height:1;opacity:.8;cursor:pointer;padding:0 2px}.sdx:hover{opacity:1}
 .fback.on{display:block;position:fixed;inset:46px 0 0 0;background:rgba(10,20,15,.32);z-index:39}
 .fbtn{display:inline-flex!important;align-items:center;gap:7px;border:0;background:var(--g7);color:#fff;font-weight:700;font-size:13px;border-radius:9px;padding:7px 13px;margin:0 6px 0 0!important;box-shadow:0 2px 6px rgba(31,93,66,.22);cursor:pointer}.fbtn:hover{background:var(--g5)}
 .eo{display:flex;align-items:center;gap:5px;margin-top:7px}.eo em{font-style:normal;flex:none;width:18px;height:18px;border-radius:50%;background:var(--g7);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
-.eo select{flex:1;min-width:0;border:1px solid #D9DFE5;border-radius:7px;padding:5px 4px;font-size:12px;font-weight:600;background:#fff;color:var(--ink)}.eo select+select{flex:0 0 122px}
+.eo select{flex:1;min-width:0;border:1px solid #D9DFE5;border-radius:7px;padding:5px 3px;font-size:11px;font-weight:600;background:#fff;color:var(--ink)}.eo select+select{flex:0 0 112px}
 .eo{position:relative}.eox{position:absolute;right:-11px;top:-17px;border:0;background:transparent;color:#9AA5B1;font-size:15px;cursor:pointer;padding:0 2px}.eox:hover{color:#C0392B}.eop{display:block;text-align:right;padding-right:14px;margin-top:6px;font-size:10.5px;color:var(--mut2)}
 .eoadd{margin-top:8px;width:100%;border:1px dashed #9AA5B1;background:#fff;border-radius:8px;padding:6px;font-size:12px;font-weight:600;color:#4A5560;cursor:pointer}
 .lrow{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)!important}
@@ -555,5 +555,8 @@ init();
  document.addEventListener('touchstart',e=>{const h=e.target.closest&&e.target.closest('.rsz');if(!h)return;e.preventDefault();h.classList.add('on');t={x:e.touches[0].clientX,w:cur(),h}},{passive:false,capture:true});
  document.addEventListener('touchmove',e=>{if(!t)return;e.preventDefault();const w=Math.max(16,Math.min(220,t.w+e.touches[0].clientX-t.x));document.documentElement.style.setProperty('--nmw',w+'px');t.cur=w},{passive:false,capture:true});
  const end=()=>{if(!t)return;t.h.classList.remove('on');if(t.cur)LS.set('nmw',Math.round(t.cur));t=null;window._rszT=Date.now()};document.addEventListener('touchend',end,true);document.addEventListener('touchcancel',end,true)})();
+function fitML(){const m=$('metList');if(!m)return;const c=[...m.children];if(c.length<=4){m.style.maxHeight='none';return}const r0=c[0].getBoundingClientRect(),r3=c[3].getBoundingClientRect();m.style.maxHeight=((r3.bottom-r0.top)/(MOB()?1:Z)+2)+'px'}
+{const f=window.renderExplore;window.renderExplore=function(){const r=f.apply(this,arguments);fitML();return r}}
+document.addEventListener('click',e=>{if(e.target.closest('#fBtn'))requestAnimationFrame(fitML)});
 </script>
 </body></html>
