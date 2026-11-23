@@ -471,11 +471,11 @@ function cardHTML(i){const r=D[i];const k=actK(r.pos);const am=amostra(r.min);
  <div class="why"><em>Observações <span class="edp">✎ Editar</span></em><textarea data-obs="${i}">${esc(getObs(i))}</textarea></div></div>`}
 function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg.classList.add('dmode');pg.innerHTML=detailHTML(S.detail);fitTA();requestAnimationFrame(fitDR);return}pg.classList.remove('dmode');
  const L=listIdx();const P=pool(S.pos);const allR=P.idx.map(i=>rend(i));const vals=L.map(i=>D[i].value).filter(x=>x!=null);
- const withV=P.idx.filter(i=>D[i].value!=null);const R={};withV.forEach(i=>R[i]=rend(i));const mv=median(withV.map(i=>D[i].value)),mr=median(withV.map(i=>R[i]));
+ const FSf=filtered();const FSv=FSf.filter(i=>D[i].value!=null);const withV=[...new Set([...FSv,...[...S.marked].filter(i=>D[i]&&D[i].pos===S.pos&&D[i].value!=null)])];const R={};withV.forEach(i=>R[i]=rend(i));const mv=median(FSv.map(i=>D[i].value)),mr=median(FSv.map(i=>R[i]));
  const meanV=withV.reduce((a,i)=>a+D[i].value,0)/Math.max(1,withV.length);const o=(id,[k,d])=>`<select data-o="${id}k">${[['rend','Rendimento'],['value','Valor'],['age','Idade'],['min','Minutos']].map(([v,t])=>`<option value="${v}" ${v===k?'selected':''}>${t}</option>`).join('')}</select><select data-o="${id}d"><option value="-1" ${d<0?'selected':''}>maior → menor</option><option value="1" ${d>0?'selected':''}>menor → maior</option></select>`;
  const ord=`<div class="ord"><span>Ordenar</span><div class="oc"><em>1</em>${o(1,S.o1)}</div>${S.o2on?`<div class="opw"><small>(opcional)</small><div class="oc"><em>2</em>${o(2,S.o2)}</div></div><button class="xx" id="o2x" title="Retirar">×</button>`:`<button class="tag" id="o2add" style="border:1px dashed #9AA5B1;background:#fff">+ segundo critério</button>`}</div>`;
  if(!L.length){pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>Lista a apresentar ao Carlos, diretor desportivo · época 2024/25</p></div></div><div class="card empty">Ainda não marcou ${POSN[S.pos][1]}. Na Exploração, marque os candidatos na tabela de trabalho.</div>`;return}
- const hl=new Set([...S.open]);const cv=costV(S.cost);const lp=S.lpts||'all';const FS=new Set(filtered());const ptsL=lp==='cand'?withV.filter(i=>S.marked.has(i)):lp==='filt'?withV.filter(i=>FS.has(i)||S.marked.has(i)):withV;S._lsc=[ptsL,R,mv,mr,hl,withV];
+ const hl=new Set([...S.open]);const cv=costV(S.cost);const ptsL=withV;S._lsc=[ptsL,R,mv,mr,hl,null];
  const rng=vals.length?(vals.length>1?fmt(Math.min(...vals))+' – '+fmt(Math.max(...vals)):fmt(vals[0]))+' M€':'sem valor';const ftc=[...S.mets[S.pos].filter(m=>m.min>0).map(m=>MET[m.k].label.toLowerCase()+' ≥ '+m.min)];
  pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>${L.length} candidato${L.length>1?'s':''} · ${rng} · para a reunião com o Carlos, diretor desportivo</p></div><button class="exb exh exo" id="exp">${expIcon('#1F5D42')} Exportar lista</button>${ord}</div>
  <div class="ctx2"><b>Como se chegou aqui:</b> ${POSN[S.pos][1]} com ≥ ${fint(S.minMin)} min${cv===Infinity?'':' e ≤ '+fmt(cv,cv<10?1:0)+' M€'}${ftc.length?' · '+ftc.join(', '):''} · rendimento = média dos percentis em ${actK(S.pos).length} métricas da posição</div>
@@ -486,8 +486,8 @@ function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg
  <div class="lobs ${ob?'':'emp'}"><span><i>Rui:</i>${ob?esc(ob):'ainda sem nota — escreva-a na ficha do jogador.'}</span></div></div>
  <div class="lic"><button class="ib" data-det="${i}" title="Ver ficha">⤢</button><button class="ib x2" data-unmark="${i}" title="Tirar da lista">×</button></div></div>`}).join('')}
  </div></section>
- <section class="card"><div class="bt btf"><span>Onde ficam face aos outros ${POSN[S.pos][1]}</span><span class="lpt">Pontos:${[['all','Todos'],['filt','Dentro dos filtros'],['cand','Só candidatos']].map(([v,t])=>`<button data-lp="${v}" class="${lp===v?'on':''}">${t}</button>`).join('')}</span></div><div id="lsc">${scatterSVG(ptsL,R,mv,mr,{w:600,h:430,hl,labels:true,shown:new Set(),all:withV})}</div>
- <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>Outros ${POSN[S.pos][1]}</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: médio típico</span></div></section></div>
+ <section class="card"><div class="bt btf"><span>Rendimento × custo</span><span class="lpt" style="font-weight:500">${FSv.length} ${POSN[S.pos][1]} filtrados com valor</span></div><div id="lsc">${scatterSVG(ptsL,R,mv,mr,{w:600,h:430,hl,labels:true,shown:new Set()})}</div>
+ <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>Restantes filtrados</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: medianas dos filtrados</span></div></section></div>
  ${S.open.size?`<div class="cards" style="grid-template-columns:repeat(${Math.min(4,Math.max(2,S.open.size))},minmax(0,1fr))">${L.filter(i=>S.open.has(i)).map(cardHTML).join('')}</div>`:''}
  `;fitTA()}
 const fitTA=()=>requestAnimationFrame(()=>document.querySelectorAll('.why textarea').forEach(t=>{t.style.height='auto';t.style.height=(t.scrollHeight+4)+'px'}));
@@ -594,7 +594,7 @@ document.addEventListener('click',e=>{if(e.target.closest('#fBtn'))requestAnimat
 function fitLSC(){const row=document.querySelector('#listPage .lrow'),l=$('lsc');if(!row||!l||!S._lsc)return;if(MOB()){row.style.height='';return}
  const top=(row.getBoundingClientRect().top+scrollY)/Z;const H=Math.max(380,innerHeight/Z-top-16);row.style.height=H+'px';
  const card=l.parentNode;const leg=card.querySelector('.sleg');const cs=getComputedStyle(card);const avail=card.clientHeight-(l.offsetTop-card.offsetTop)-(leg?leg.offsetHeight+10:0)-parseFloat(cs.paddingBottom);
- const w=l.clientWidth;const [a,b,c,d,hl,all]=S._lsc;l.innerHTML=scatterSVG(a,b,c,d,{w,h:Math.max(260,avail-4),hl,labels:true,shown:new Set(),all})}
+ const w=l.clientWidth;const [a,b,c,d,hl]=S._lsc;l.innerHTML=scatterSVG(a,b,c,d,{w,h:Math.max(260,avail-4),hl,labels:true,shown:new Set()})}
 {const f=window.renderLista;window.renderLista=function(){const r=f.apply(this,arguments);requestAnimationFrame(()=>{fitLSC();chkScr()});return r}}
 window.addEventListener('resize',()=>{if(location.hash==='#lista')requestAnimationFrame(fitLSC)});
 </script>
