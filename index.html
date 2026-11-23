@@ -198,6 +198,8 @@ html.mob .logo{font-size:15px;gap:7px}html.mob .user{display:none}html.mob .tabs
 html.mob .k b small{font-size:10.5px}html.mob .k b{white-space:nowrap}
 html.mob #tWork .who b{font-size:12px}html.mob #tWork .who span{font-size:10px}html.mob #tWork .who b,html.mob #tWork .who span{max-width:96px}html.mob #tWork .av{width:24px;height:24px;font-size:9.5px}html.mob #tWork .who{gap:6px}html.mob #tWork td{padding:5px 4px}
 html.mob .v1t{display:none}.v1t{font-style:normal}html.mob .kpis{grid-auto-rows:1fr}html.mob .k span{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+#tWork td:first-child,#tWork th:first-child,#tX td:first-child{padding-left:13px}
+.exh{margin:0 auto;align-self:center;padding:9px 18px;font-size:13.5px}html.mob .exh{margin:0}
 </style>
 </head>
 <body>
@@ -424,7 +426,7 @@ function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg
  const ord=`<div class="ord"><span>Ordenar</span><div class="oc"><em>1</em>${o(1,S.o1)}</div>${S.o2on?`<div class="opw"><small>(opcional)</small><div class="oc"><em>2</em>${o(2,S.o2)}</div></div><button class="xx" id="o2x" title="Retirar">×</button>`:`<button class="tag" id="o2add" style="border:1px dashed #9AA5B1;background:#fff">+ segundo critério</button>`}</div>`;
  if(!L.length){pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>Lista a apresentar ao Carlos, diretor desportivo · época 2024/25</p></div></div><div class="card empty">Ainda não marcou ${POSN[S.pos][1]}. Na Exploração, marque os candidatos na tabela de trabalho.</div>`;return}
  const hl=new Set([...S.open]);const cv=costV(S.cost);
- pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>Lista a apresentar ao Carlos, diretor desportivo · época 2024/25</p></div>${ord}</div>
+ pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>Lista a apresentar ao Carlos, diretor desportivo · época 2024/25</p></div><button class="exb exh" id="exp">${expIcon()} Exportar lista</button>${ord}</div>
  <div class="kpis"><div class="k nv"><span>Candidatos</span><b>${L.length} <small>de ${P.idx.length} ${POSN[S.pos][1]} analisados</small></b></div><div class="k"><span>Valor de mercado dos candidatos</span><b>${vals.length?fmt(Math.min(...vals))+' – '+fmt(Math.max(...vals)):'—'} <small>M€</small></b></div><div class="k"><span>Valor de mercado médio da posição</span><b>${fmt(meanV)} <small>M€</small></b></div><div class="k"><span>Rendimento mediano da posição</span><b>${Math.round(median(allR)??0)} <small>percentil médio</small></b></div></div>
  <div class="ctx"><b style="color:var(--ink);margin-right:4px">Como se chegou a esta lista:</b>${[POSN[S.pos][0],'≥ '+fint(S.minMin)+' min',cv===Infinity?'sem limite de custo':'≤ '+fmt(cv,cv<10?1:0)+' M€',...S.mets[S.pos].filter(m=>m.min>0).map(m=>MET[m.k].label+' ≥ '+m.min)].map(t=>`<span class="chip">${t}</span>`).join('')}<span style="margin-left:auto">Rendimento: ${actK(S.pos).map(k=>MET[k].label.toLowerCase()).join(', ')}</span></div>
  <div class="lrow"><section class="card"><div class="bt">Os ${L.length} candidatos</div><table><thead><tr><th>Jogador</th><th class="c">Pé preferido</th><th class="r">Idade</th><th class="r">Valor</th><th class="c">Rendimento</th><th class="c">Amostra</th><th class="c"></th></tr></thead><tbody>
@@ -433,7 +435,7 @@ function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg
  <section class="card"><div class="bt">Onde ficam face aos outros ${POSN[S.pos][1]}</div><div id="lsc">${scatterSVG(withV,R,mv,mr,{w:500,h:400,hl,labels:true,shown:new Set()})}</div>
  <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>Outros ${POSN[S.pos][1]}</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: médio típico</span></div></section></div>
  ${S.open.size?`<div class="cards" style="grid-template-columns:repeat(${Math.min(4,Math.max(2,S.open.size))},minmax(0,1fr))">${L.filter(i=>S.open.has(i)).map(cardHTML).join('')}</div>`:''}
- <div class="foot2"><span></span><button class="exb" id="exp">${expIcon()} Exportar lista</button></div>`;fitTA()}
+ `;fitTA()}
 const fitTA=()=>requestAnimationFrame(()=>document.querySelectorAll('.why textarea').forEach(t=>{t.style.height='auto';t.style.height=(t.scrollHeight+4)+'px'}));
 const expIcon=()=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>`;
 function detailHTML(i){const r=D[i];const keys=radarKeys();const vals=keys.map(k=>pct(i,k)),mean=keys.map(k=>meanPct(r.pos,k));const am=amostra(r.min);const fi=footImg(r.foot);
