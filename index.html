@@ -296,7 +296,7 @@ html.mob .btf{flex-wrap:wrap}html.mob .lct1{flex-basis:100%}
 <div class="btns"><button class="b1" id="goAna">Analisar 2 marcados</button><button class="b2" id="goList">Ver a lista curta →</button></div></section><section class="card" id="xCard" style="display:none"><div class="ch"><h2 style="font-size:14px">Marcados fora desta vista</h2><span class="s">desmarque na caixa para os tirar da lista</span></div><table id="tX"></table></section></div>
 <section class="card" id="scCard"><div class="ch" style="align-items:flex-start"><div><h2><em>V2</em>Rendimento × custo</h2><div class="s" id="sInfo"></div></div><div id="selCard"></div></div>
 <div id="scatter"></div>
-<div class="sleg"><span><i style="background:var(--navy)"></i>Marcados</span><span><i style="background:#59636E"></i>Na tabela</span><span><i style="background:#C9D0D8"></i>${lp==='all'?'Outros '+POSN[S.pos][1]:'Restantes filtrados'}</span><span><i style="border:2px solid var(--navy)"></i>Selecionado</span></div>
+<div class="sleg"><span><i style="background:var(--navy)"></i>Marcados</span><span><i style="background:#59636E"></i>Na tabela</span><span><i style="background:#C9D0D8"></i>Restantes filtrados</span><span><i style="border:2px solid var(--navy)"></i>Selecionado</span></div>
 <div class="warn" id="noVal"></div></section>
 </div>
 
@@ -510,7 +510,7 @@ function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg
  <div class="lic"><button class="ib lde" data-det="${i}" title="Ver em detalhe"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button><button class="ib x2" data-unmark="${i}" title="Tirar da lista">×</button></div></div>`}).join('')}
  </div></section>
  <section class="card"><div class="bt btf"><span>Rendimento × custo</span><span class="lpt">Pontos:${[['all','Todos'],['filt','Dentro dos filtros'],['cand','Só candidatos']].map(([v,t])=>`<button data-lp="${v}" class="${lp===v?'on':''}">${t}</button>`).join('')}</span></div><div id="lsc">${scatterSVG(ptsL,R,mv,mr,{w:600,h:430,hl,labels:true,shown:new Set(),all:lp==='cand'?withV:null})}</div>
- <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>Restantes filtrados</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: ${lp==='all'?'médio típico':'medianas dos filtrados'}</span></div></section></div>
+ <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>${lp==='all'?'Outros '+POSN[S.pos][1]:'Restantes filtrados'}</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: ${lp==='all'?'médio típico':'medianas dos filtrados'}</span></div></section></div>
  ${S.open.size?`<div class="cards" style="grid-template-columns:repeat(${Math.min(4,Math.max(2,S.open.size))},minmax(0,1fr))">${L.filter(i=>S.open.has(i)).map(cardHTML).join('')}</div>`:''}
  `;fitTA()}
 const fitTA=()=>requestAnimationFrame(()=>document.querySelectorAll('.why textarea').forEach(t=>{t.style.height='auto';t.style.height=(t.scrollHeight+4)+'px'}));
