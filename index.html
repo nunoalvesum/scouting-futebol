@@ -233,7 +233,7 @@ html.mob .lrow{grid-template-columns:minmax(0,1fr)!important}html.mob .side{widt
 .lnums{display:flex;gap:22px;margin-left:auto;text-align:right}.lnums b{display:block;font-size:22px;font-weight:800;line-height:1.1;white-space:nowrap}.lnums small{font-size:11px;color:#6B7680;font-weight:600}
 .lobs{margin-top:9px;font-size:13.5px;color:#33414D;background:#F5F7F9;border-radius:9px;padding:7px 10px;line-height:1.35}.lobs i{color:#8A949D;font-style:normal;font-weight:700;margin-right:5px}.lobs.emp{color:#9AA5B1;font-style:italic}
 .lic{position:absolute;top:8px;right:8px;display:flex;gap:2px}
-.lrow{grid-template-columns:minmax(0,560px) minmax(0,1fr)!important}
+.lrow{grid-template-columns:minmax(0,590px) minmax(0,1fr)!important}
 html.mob .lnums{gap:14px}html.mob .lnums b{font-size:18px}html.mob .lct{flex-wrap:wrap}html.mob .lnm{font-size:16px}
 #listPage .lrow>.card{min-height:0}#lsc svg{display:block}
 html.mob .opw small{position:static;display:block;text-align:right}html.mob .exh{align-self:flex-start}
@@ -244,6 +244,29 @@ html.mob .opw small{position:static;display:block;text-align:right}html.mob .exh
 html.mob .btf{flex-wrap:wrap}html.mob .lct1{flex-basis:100%}
 .dcard .hk>div:nth-child(-n+2) b{font-size:34px;line-height:1.05}.dcard .hk>div:nth-child(-n+2){font-size:12.5px;font-weight:600}.dcard .hk{gap:34px}
 .lobs{font-size:12.5px!important}.lobs>span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* polimento lista curta */
+#listPage .card{border-radius:18px;box-shadow:0 1px 2px rgba(16,30,40,.04),0 6px 20px rgba(16,30,40,.05)}
+.btc{display:flex;align-items:center;gap:8px}.cnt{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 6px;border-radius:10px;background:#E8F1EC;color:#1F5D42;font-size:11.5px;letter-spacing:0}
+.lcl{gap:12px;padding:3px 4px 6px}
+.lc{border:1px solid #E6EAEE;border-radius:16px;padding:14px 16px 13px;box-shadow:0 1px 2px rgba(16,30,40,.04);transition:box-shadow .18s,border-color .18s,transform .18s}
+.lc:hover{border-color:#D3DAE1;box-shadow:0 6px 18px rgba(16,30,40,.08);transform:translateY(-1px)}
+.lc.on{border-color:#F2C230;box-shadow:0 0 0 3px #FCEFC2,0 6px 18px rgba(16,30,40,.06)}
+.lcl1 .av{width:44px;height:44px;font-size:15px;background:linear-gradient(145deg,#2E56C4,#1F3F9A);box-shadow:0 2px 6px rgba(37,71,168,.25)}
+.lft{height:24px;opacity:.95}
+.lnm{font-size:17.5px;letter-spacing:-.01em}.lcb2{font-size:12.5px;color:#7A858F}
+.lct{padding-right:24px;gap:10px}
+.lnums{gap:0;align-items:flex-start}.lnums>div{min-width:50px}.lnums>div+div{min-width:74px;border-left:1px solid #EDF0F3;margin-left:10px;padding-left:10px}
+.lnums b{font-size:21px;letter-spacing:-.02em}.lnums small{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#8A949D}
+.lobs{background:#F6F8F7;border-left:3px solid #CFE3D7;border-radius:8px;padding:7px 11px;margin-top:10px;color:#3A4752}.lobs i{color:#1F5D42}
+.lic{top:10px;right:10px;opacity:.55;transition:opacity .15s}.lc:hover .lic{opacity:1}
+.lwarn{font-size:10px;padding:2px 8px;margin-left:9px;background:#FCE8E3;color:#B4442E;border:1px solid #F6CFC5}
+.btf .lpt button{border-radius:999px;padding:3px 11px}
+#lsc text[fill="#7A8591"]{paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round}
+.sleg{margin-top:4px}
+
+.exo{border-radius:10px!important}
+.ctx2 svg{display:inline-block!important}
 </style>
 </head>
 <body>
@@ -478,8 +501,8 @@ function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg
  const hl=new Set([...S.open]);const cv=costV(S.cost);const ptsL=lp==='cand'?mkV:withV;S._lsc=[ptsL,R,mv,mr,hl,lp==='cand'?withV:null];
  const rng=vals.length?(vals.length>1?fmt(Math.min(...vals))+' – '+fmt(Math.max(...vals)):fmt(vals[0]))+' M€':'sem valor';const ftc=[...S.mets[S.pos].filter(m=>m.min>0).map(m=>MET[m.k].label.toLowerCase()+' ≥ '+m.min)];
  pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>${L.length} candidato${L.length>1?'s':''} · ${rng} · para a reunião com o Carlos, diretor desportivo</p></div><button class="exb exh exo" id="exp">${expIcon('#1F5D42')} Exportar lista</button>${ord}</div>
- <div class="ctx2"><b>Como se chegou aqui:</b> ${POSN[S.pos][1]} com ≥ ${fint(S.minMin)} min${cv===Infinity?'':' e ≤ '+fmt(cv,cv<10?1:0)+' M€'}${ftc.length?' · '+ftc.join(', '):''} · rendimento = média dos percentis em ${actK(S.pos).length} métricas da posição</div>
- <div class="lrow"><section class="card lcards"><div class="bt">Os ${L.length} candidatos</div><div class="lcl">
+ <div class="ctx2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A949D" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><b>Como se chegou aqui:</b> ${POSN[S.pos][1]} com ≥ ${fint(S.minMin)} min${cv===Infinity?'':' e ≤ '+fmt(cv,cv<10?1:0)+' M€'}${ftc.length?' · '+ftc.join(', '):''} · rendimento = média dos percentis em ${actK(S.pos).length} métricas da posição</div>
+ <div class="lrow"><section class="card lcards"><div class="bt btc">Candidatos <span class="cnt">${L.length}</span></div><div class="lcl">
  ${L.map(i=>{const r=D[i];const am=amostra(r.min);const fi=footImg(r.foot);const on=S.open.has(i);const own=S.obs[r.name+'|'+r.club];const ob=(own!=null&&own.trim()?own:obsShort(i)).trim();const rv=rend(i);return `<div class="lc ${on?'on':''}" data-open="${i}"><div class="lcl1"><div class="av m">${ini(r.name)}</div>${fi?`<img class="lft" src="${fi}" alt="Pé ${footTxt(r.foot)}" title="Pé ${footTxt(r.foot)}">`:''}</div>
  <div class="lcb"><div class="lct"><div class="lct1"><div class="lnm"><span class="lnn">${esc(r.name)}</span>${am[0]==='Curta'?'<span class="lwarn">amostra curta</span>':''}</div><div class="lcb2">${esc(r.club)} · ${r.age} anos</div></div>
  <div class="lnums"><div><b style="color:${rv!=null&&rv>=50?'#1F7A4D':'#B4442E'}">${rv??'—'}</b><small>rendimento</small></div><div><b>${r.value==null?'—':fmt(r.value)+' M€'}</b><small>valor</small></div></div></div>
@@ -512,6 +535,7 @@ function exportHTML(){const L=listIdx();const P=pool(S.pos);const withV=P.idx.fi
  const card=i=>{const r=D[i];const am=amostra(r.min);return `<div class="cd"><b style="font-size:17px">${esc(r.name)}</b><div style="font-size:12.5px;color:#66727E">${esc(r.club)} · ${r.age} anos · ${POSN[r.pos][0]} · pé ${footTxt(r.foot)}${r.height?' · '+fmt(r.height/100,2)+' m':''}</div><div style="display:flex;gap:30px;margin:8px 0"><div><b style="font-size:20px">${r.value==null?'—':fmt(r.value)+' M€'}</b><div style="font-size:11px;color:#66727E">valor de mercado</div></div><div><b style="font-size:20px;color:#1F6B42">${rend(i)}</b><div style="font-size:11px;color:#66727E">rendimento</div></div><div><b style="font-size:20px;color:${am[1]}">${am[0]}</b><div style="font-size:11px;color:#66727E">amostra · ${fint(r.min)} min</div></div></div>${keys.map(k=>{const p=pct(i,k);return `<div class="mr"><span>${MET[k].label}</span><b>${p==null?'—':'melhor que '+p+'%'}</b></div>${bar(p,meanPct(r.pos,k))}`}).join('')}<div style="font-size:12px;margin-top:8px;color:#3B4651">${fint(r.mp)} jogos (${fint(r.starts)} a titular) · ${fint(r.gls)} golos · ${fint(r.ast)} assistências · ${fint(r.crdy)} amarelos · ${fint(r.crdr)} vermelhos${r.contract?' · contrato até '+r.contract.split('-').reverse().join('/'):''}</div><div class="why"><b>Observações</b>${esc(getObs(i))}</div></div>`};
  return `<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><title>Lista curta · ${POSN[S.pos][0]}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><style>${css}html.mob .opw small{position:static;display:block;text-align:right}html.mob .exh{align-self:flex-start}
 .lobs{font-size:12.5px!important}.lobs>span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ctx2 svg{display:inline-block!important}
 </style></head><body>
  <div class="hd"><b>Triagem · Lista curta para decisão</b><span>Preparada por Rui (analista de recrutamento) para Carlos (diretor desportivo) · época 2024/25</span></div>
  <h1>${L.length} ${L.length===1?POSN[S.pos][0].toLowerCase():POSN[S.pos][1]} propostos para observação presencial</h1><p>Foram analisados <b>${P.idx.length} ${POSN[S.pos][1]}</b> das cinco grandes ligas com pelo menos ${fint(S.minMin)} minutos. O rendimento é a média dos percentis em: ${keys.map(k=>MET[k].label.toLowerCase()).join(', ')}.</p>
