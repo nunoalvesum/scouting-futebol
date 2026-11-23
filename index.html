@@ -237,6 +237,11 @@ html.mob .lrow{grid-template-columns:minmax(0,1fr)!important}html.mob .side{widt
 html.mob .lnums{gap:14px}html.mob .lnums b{font-size:18px}html.mob .lct{flex-wrap:wrap}html.mob .lnm{font-size:16px}
 #listPage .lrow>.card{min-height:0}#lsc svg{display:block}
 html.mob .opw small{position:static;display:block;text-align:right}html.mob .exh{align-self:flex-start}
+.lct1{flex:1;min-width:0}.lnm{display:flex;align-items:center;white-space:nowrap;min-width:0}.lnn{overflow:hidden;text-overflow:ellipsis;min-width:0}.lwarn{flex:none;white-space:nowrap}
+.btf{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.lpt{display:flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0;font-size:11.5px;color:var(--mut2);font-weight:600}
+.lpt button{border:1px solid #D9DFE5;background:#fff;border-radius:7px;padding:3px 9px;font-size:11.5px;font-weight:600;color:#4A5560;cursor:pointer}.lpt button.on{background:var(--g7);border-color:var(--g7);color:#fff}
+html.mob .btf{flex-wrap:wrap}html.mob .lct1{flex-basis:100%}
 </style>
 </head>
 <body>
@@ -467,18 +472,18 @@ function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg
  const meanV=withV.reduce((a,i)=>a+D[i].value,0)/Math.max(1,withV.length);const o=(id,[k,d])=>`<select data-o="${id}k">${[['rend','Rendimento'],['value','Valor'],['age','Idade'],['min','Minutos']].map(([v,t])=>`<option value="${v}" ${v===k?'selected':''}>${t}</option>`).join('')}</select><select data-o="${id}d"><option value="-1" ${d<0?'selected':''}>maior → menor</option><option value="1" ${d>0?'selected':''}>menor → maior</option></select>`;
  const ord=`<div class="ord"><span>Ordenar</span><div class="oc"><em>1</em>${o(1,S.o1)}</div>${S.o2on?`<div class="opw"><small>(opcional)</small><div class="oc"><em>2</em>${o(2,S.o2)}</div></div><button class="xx" id="o2x" title="Retirar">×</button>`:`<button class="tag" id="o2add" style="border:1px dashed #9AA5B1;background:#fff">+ segundo critério</button>`}</div>`;
  if(!L.length){pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>Lista a apresentar ao Carlos, diretor desportivo · época 2024/25</p></div></div><div class="card empty">Ainda não marcou ${POSN[S.pos][1]}. Na Exploração, marque os candidatos na tabela de trabalho.</div>`;return}
- const hl=new Set([...S.open]);const cv=costV(S.cost);S._lsc=[withV,R,mv,mr,hl];
+ const hl=new Set([...S.open]);const cv=costV(S.cost);const lp=S.lpts||'all';const FS=new Set(filtered());const ptsL=lp==='cand'?withV.filter(i=>S.marked.has(i)):lp==='filt'?withV.filter(i=>FS.has(i)||S.marked.has(i)):withV;S._lsc=[ptsL,R,mv,mr,hl];
  const rng=vals.length?(vals.length>1?fmt(Math.min(...vals))+' – '+fmt(Math.max(...vals)):fmt(vals[0]))+' M€':'sem valor';const ftc=[...S.mets[S.pos].filter(m=>m.min>0).map(m=>MET[m.k].label.toLowerCase()+' ≥ '+m.min)];
  pg.innerHTML=`<div class="hd"><div><h1>Lista curta · ${POSN[S.pos][0]}</h1><p>${L.length} candidato${L.length>1?'s':''} · ${rng} · para a reunião com o Carlos, diretor desportivo</p></div><button class="exb exh exo" id="exp">${expIcon('#1F5D42')} Exportar lista</button>${ord}</div>
  <div class="ctx2"><b>Como se chegou aqui:</b> ${POSN[S.pos][1]} com ≥ ${fint(S.minMin)} min${cv===Infinity?'':' e ≤ '+fmt(cv,cv<10?1:0)+' M€'}${ftc.length?' · '+ftc.join(', '):''} · rendimento = média dos percentis em ${actK(S.pos).length} métricas da posição</div>
  <div class="lrow"><section class="card lcards"><div class="bt">Os ${L.length} candidatos</div><div class="lcl">
  ${L.map(i=>{const r=D[i];const am=amostra(r.min);const fi=footImg(r.foot);const on=S.open.has(i);const ob=(S.obs[r.name+'|'+r.club]||'').trim();const rv=rend(i);return `<div class="lc ${on?'on':''}" data-open="${i}"><div class="lcl1"><div class="av m">${ini(r.name)}</div>${fi?`<img class="lft" src="${fi}" alt="Pé ${footTxt(r.foot)}" title="Pé ${footTxt(r.foot)}">`:''}</div>
- <div class="lcb"><div class="lct"><div><div class="lnm">${esc(r.name)}${am[0]==='Curta'?'<span class="lwarn">amostra curta</span>':''}</div><div class="lcb2">${esc(r.club)} · ${r.age} anos</div></div>
+ <div class="lcb"><div class="lct"><div class="lct1"><div class="lnm"><span class="lnn">${esc(r.name)}</span>${am[0]==='Curta'?'<span class="lwarn">amostra curta</span>':''}</div><div class="lcb2">${esc(r.club)} · ${r.age} anos</div></div>
  <div class="lnums"><div><b style="color:${rv!=null&&rv>=50?'#1F7A4D':'#B4442E'}">${rv??'—'}</b><small>rendimento</small></div><div><b>${r.value==null?'—':fmt(r.value)+' M€'}</b><small>valor</small></div></div></div>
  <div class="lobs ${ob?'':'emp'}"><i>Rui:</i>${ob?esc(ob):'ainda sem nota — escreva-a na ficha do jogador.'}</div></div>
  <div class="lic"><button class="ib" data-det="${i}" title="Ver ficha">⤢</button><button class="ib x2" data-unmark="${i}" title="Tirar da lista">×</button></div></div>`}).join('')}
  </div></section>
- <section class="card"><div class="bt">Onde ficam face aos outros ${POSN[S.pos][1]}</div><div id="lsc">${scatterSVG(withV,R,mv,mr,{w:600,h:430,hl,labels:true,shown:new Set()})}</div>
+ <section class="card"><div class="bt btf"><span>Onde ficam face aos outros ${POSN[S.pos][1]}</span><span class="lpt">Pontos:${[['all','Todos'],['filt','Dentro dos filtros'],['cand','Só candidatos']].map(([v,t])=>`<button data-lp="${v}" class="${lp===v?'on':''}">${t}</button>`).join('')}</span></div><div id="lsc">${scatterSVG(ptsL,R,mv,mr,{w:600,h:430,hl,labels:true,shown:new Set()})}</div>
  <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>Outros ${POSN[S.pos][1]}</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: médio típico</span></div></section></div>
  ${S.open.size?`<div class="cards" style="grid-template-columns:repeat(${Math.min(4,Math.max(2,S.open.size))},minmax(0,1fr))">${L.filter(i=>S.open.has(i)).map(cardHTML).join('')}</div>`:''}
  `;fitTA()}
@@ -557,7 +562,8 @@ function bind(){$('eOrd').addEventListener('change',e=>{const t=e.target.dataset
   const det=t.closest('[data-det]');if(det){S.detail=+det.dataset.det;route();window.scrollTo(0,0);return}
   const cl=t.closest('[data-close]');if(cl){S.open.delete(+cl.dataset.close);renderLista();return}
   const pt=t.closest('.pt');const tr=t.closest('[data-open]');const i=pt?+pt.dataset.i:tr?+tr.dataset.open:null;
-  if(i!=null&&S.marked.has(i)){S.open.has(i)?S.open.delete(i):S.open.add(i);renderLista()}});
+  if(i!=null&&S.marked.has(i)){S.open.has(i)?S.open.delete(i):S.open.add(i);renderLista()}else if(i!=null&&pt){S.marked.add(i);S.open.add(i);save();renderLista();toast(D[i].name+' entrou na lista curta.')}
+  const lpb=t.closest('[data-lp]');if(lpb){S.lpts=lpb.dataset.lp;renderLista()}});
  lp.addEventListener('change',e=>{const o=e.target.dataset.o;if(!o)return;const n=+o[0],f=o[1];const tgt=n===1?S.o1:S.o2;if(f==='k')tgt[0]=e.target.value;else tgt[1]=+e.target.value;renderLista()});
  lp.addEventListener('input',e=>{const i=e.target.dataset.obs;if(i==null)return;e.target.style.height='auto';e.target.style.height=(e.target.scrollHeight+4)+'px';const r=D[+i];S.obs[r.name+'|'+r.club]=e.target.value;save()});
 }
