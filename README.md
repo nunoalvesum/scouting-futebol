@@ -1,4 +1,4 @@
-# Scouting · Triagem de jogadores por rendimento × custo
+# Scouting
 
 Aplicação de visualização para triagem de jogadores (AVI · MEGSI · Universidade do Minho).
 

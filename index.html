@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Scouting Futebol</title>
+<title>Scouting</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -173,9 +173,7 @@ html.noscr,html.noscr body{overflow:hidden}
 
 /* telemóvel */
 html.mob .appbar{padding:0 10px;gap:8px}html.mob .user span{display:none}html.mob .user img{width:28px;height:28px}html.mob .tabs{gap:2px}html.mob .tabs a{padding:6px 9px;font-size:13px}
-html.mob .wrap{display:block;min-height:0}html.mob .side{position:static;height:auto;padding:10px 12px}
-html.mob .side>h3:first-child{margin:2px;cursor:pointer;font-size:12px;padding:6px 0}html.mob .side>h3:first-child::after{content:'▾';font-size:14px;letter-spacing:0;transition:transform .2s}html.mob .side.open>h3:first-child::after{transform:rotate(180deg)}
-html.mob .side:not(.open)>*:not(:first-child){display:none!important}html.mob .side.open>h3:first-child{margin-bottom:10px}
+html.mob .wrap{display:block;min-height:0}html.mob .side{position:fixed;left:0;top:46px;bottom:0;height:auto;width:min(300px,84vw);z-index:40;overflow-y:auto;transform:translateX(-105%);transition:transform .25s ease;box-shadow:6px 0 24px rgba(0,0,0,.25);padding:12px}html.mob .side.open{transform:none}
 html.mob #metList{max-height:none;overflow:visible;flex:none}
 html.mob .main{padding:12px 10px}html.mob .kpis{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}html.mob .k{padding:10px 12px}html.mob .k b{font-size:21px}html.mob .k span{font-size:11px}
 html.mob .ctx>span[style]{margin-left:0!important;width:100%;font-size:11.5px}
@@ -193,15 +191,22 @@ html.mob #listPage.dmode{padding-top:10px}html.mob .dpg{height:auto}html.mob .dc
 html.mob .sts{grid-template-columns:repeat(3,1fr);gap:6px}html.mob .dcard .two{grid-template-columns:minmax(0,1fr)}html.mob #dRadar{height:320px;flex:none}html.mob .dright .ia{grid-template-columns:1fr 1fr}
 html.mob #tWork th:nth-child(1),html.mob #tWork td:nth-child(1){position:sticky;left:0;z-index:2;background:#fff;min-width:34px}html.mob #tWork th:nth-child(2),html.mob #tWork td:nth-child(2){position:sticky;left:34px;z-index:2;background:#fff;box-shadow:6px 0 6px -4px rgba(16,30,40,.12)}
 html.mob #tWork thead th:nth-child(-n+2){z-index:3}html.mob #tWork tr.sel td:nth-child(-n+2){background:#EEF2FB}html.mob #tWork .who b,html.mob #tWork .who span{max-width:118px;overflow:hidden;text-overflow:ellipsis}html.mob #tWork .av{width:28px;height:28px;font-size:10.5px}
+.fbtn,.fback{display:none}
+html.mob .fbtn{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--g7);color:#fff;font-weight:700;font-size:13px;border-radius:9px;padding:7px 12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(31,93,66,.25)}
+html.mob .fback.on{display:block;position:fixed;inset:46px 0 0 0;background:rgba(10,20,15,.35);z-index:39}
+html.mob .logo{font-size:15px;gap:7px}html.mob .user{display:none}html.mob .tabs a{padding:6px 7px;font-size:12.5px}
+html.mob .k b small{font-size:10.5px}html.mob .k b{white-space:nowrap}
+html.mob #tWork .who b{font-size:12px}html.mob #tWork .who span{font-size:10px}html.mob #tWork .who b,html.mob #tWork .who span{max-width:96px}html.mob #tWork .av{width:24px;height:24px;font-size:9.5px}html.mob #tWork .who{gap:6px}html.mob #tWork td{padding:5px 4px}
+html.mob .v1t{display:none}.v1t{font-style:normal}html.mob .kpis{grid-auto-rows:1fr}html.mob .k span{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 </style>
 </head>
 <body>
-<div class="appbar"><div class="logo"><i>◆</i></div>
+<div class="appbar"><div class="logo"><i>◆</i>Scouting</div>
 <nav class="tabs"><a href="#exploracao" data-v="exploracao">Exploração</a><a href="#analise" data-v="analise">Análise</a><a href="#lista" data-v="lista">Lista curta</a></nav>
 <div class="user"><span><b>Rui</b> · analista de recrutamento</span><img src="data:image/jpeg;base64,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" alt=""></div></div>
 
 <section class="view" id="v-exploracao"><div class="wrap">
-<aside class="side"><h3>V1 · Filtros</h3>
+<aside class="side"><h3><div><i class="v1t">V1 · </i>Filtros</div></h3>
 <div class="f"><div class="fr"><span>Posição</span></div><select id="fPos"><option value="DF">Defesa</option><option value="MF">Médio</option><option value="FW">Avançado</option><option value="GK">Guarda-redes</option></select></div>
 <div class="f"><div class="fr"><span>Minutos mínimos</span><em id="lMin"></em></div><input type="range" id="fMin" min="450" max="2500" step="50"></div>
 <div class="f"><div class="fr"><span>Custo máximo</span><em id="lCost"></em></div><input type="range" id="fCost" min="0" max="100" step="1"><small>valor de mercado (Transfermarkt)</small></div>
@@ -211,7 +216,7 @@ html.mob #tWork thead th:nth-child(-n+2){z-index:3}html.mob #tWork tr.sel td:nth
 <div id="metList"></div>
 <button class="addm" id="addM">+ Adicionar métrica</button><select class="addsel" id="addSel"></select>
 </aside>
-<main class="main">
+<main class="main"><button class="fbtn" id="fBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtros</button><div class="fback" id="fBack"></div>
 <div class="kpis" id="kpis"></div>
 <div class="ctx" id="ctx"></div>
 <div class="row2">
@@ -466,7 +471,7 @@ function route(){const v=(location.hash||'#exploracao').slice(1);const ok=['expl
  if(ok==='exploracao')renderExplore();else if(ok==='analise')renderAnalise();else renderLista();}
 function chkScr(){const h=document.documentElement;h.classList.remove('noscr');if(MOB())return;requestAnimationFrame(()=>{if(h.scrollHeight-innerHeight<=12)h.classList.add('noscr')})}
 function rerender(){save();route()}
-function bind(){document.querySelector('.side>h3').addEventListener('click',e=>{if(MOB())e.currentTarget.parentNode.classList.toggle('open')});
+function bind(){const sdT=o=>{document.querySelector('.side').classList.toggle('open',o);$('fBack').classList.toggle('on',o)};$('fBtn').onclick=()=>sdT(true);$('fBack').onclick=()=>sdT(false);
  window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0)});
  $('fPos').onchange=e=>{S.pos=e.target.value;S.sel=null;S.sort={k:'rend',d:-1};S.open.clear();S.detail=null;rerender()};
  $('fMin').oninput=e=>{S.minMin=+e.target.value;$('lMin').textContent='≥ '+fint(S.minMin)};$('fMin').onchange=()=>rerender();
