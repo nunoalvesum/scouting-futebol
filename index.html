@@ -233,7 +233,7 @@ html.mob .lrow{grid-template-columns:minmax(0,1fr)!important}html.mob .side{widt
 .lnums{display:flex;gap:22px;margin-left:auto;text-align:right}.lnums b{display:block;font-size:22px;font-weight:800;line-height:1.1;white-space:nowrap}.lnums small{font-size:11px;color:#6B7680;font-weight:600}
 .lobs{margin-top:9px;font-size:13.5px;color:#33414D;background:#F5F7F9;border-radius:9px;padding:7px 10px;line-height:1.35}.lobs i{color:#8A949D;font-style:normal;font-weight:700;margin-right:5px}.lobs.emp{color:#9AA5B1;font-style:italic}
 .lic{position:absolute;top:8px;right:8px;display:flex;gap:2px}
-.lrow{grid-template-columns:minmax(0,590px) minmax(0,1fr)!important}
+.lrow{grid-template-columns:minmax(0,620px) minmax(0,1fr)!important}
 html.mob .lnums{gap:14px}html.mob .lnums b{font-size:18px}html.mob .lct{flex-wrap:wrap}html.mob .lnm{font-size:16px}
 #listPage .lrow>.card{min-height:0}#lsc svg{display:block}
 html.mob .opw small{position:static;display:block;text-align:right}html.mob .exh{align-self:flex-start}
@@ -255,11 +255,11 @@ html.mob .btf{flex-wrap:wrap}html.mob .lct1{flex-basis:100%}
 .lcl1 .av{width:44px;height:44px;font-size:15px;background:linear-gradient(145deg,#2E56C4,#1F3F9A);box-shadow:0 2px 6px rgba(37,71,168,.25)}
 .lft{height:24px;opacity:.95}
 .lnm{font-size:17.5px;letter-spacing:-.01em}.lcb2{font-size:12.5px;color:#7A858F}
-.lct{padding-right:24px;gap:10px}
+.lct{padding-right:50px;gap:10px}
 .lnums{gap:0;align-items:flex-start}.lnums>div{min-width:50px}.lnums>div+div{min-width:74px;border-left:1px solid #EDF0F3;margin-left:10px;padding-left:10px}
 .lnums b{font-size:21px;letter-spacing:-.02em}.lnums small{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#8A949D}
 .lobs{background:#F6F8F7;border-left:3px solid #CFE3D7;border-radius:8px;padding:7px 11px;margin-top:10px;color:#3A4752}.lobs i{color:#1F5D42}
-.lic{top:8px;right:8px;flex-direction:column;align-items:center;gap:6px;z-index:2}.lic .ib{color:#A3ADB7;display:grid;place-items:center;width:22px;height:22px;border-radius:6px;padding:0;margin:0}.lic .ib:hover{background:#F0F3F5}.lic .lde:hover{color:#1F5D42}.lic svg{display:block}
+.lic{top:8px;right:8px;flex-direction:row;align-items:center;gap:2px;z-index:2}.lic .ib{color:#A3ADB7;display:grid;place-items:center;width:22px;height:22px;border-radius:6px;padding:0;margin:0}.lic .ib:hover{background:#F0F3F5}.lic .lde:hover{color:#1F5D42}.lic svg{display:block}
 .lwarn{font-size:10px;padding:2px 8px;margin-left:9px;background:#FCE8E3;color:#B4442E;border:1px solid #F6CFC5}
 .btf .lpt button{border-radius:999px;padding:3px 11px}
 #lsc text[fill="#7A8591"]{paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round}
@@ -507,7 +507,7 @@ function renderLista(){const pg=$('listPage');if(S.detail!=null&&D[S.detail]){pg
  <div class="lcb"><div class="lct"><div class="lct1"><div class="lnm"><span class="lnn">${esc(r.name)}</span>${am[0]==='Curta'?'<span class="lwarn">amostra curta</span>':''}</div><div class="lcb2">${esc(r.club)} · ${r.age} anos</div></div>
  <div class="lnums"><div><b style="color:${rv!=null&&rv>=50?'#1F7A4D':'#B4442E'}">${rv??'—'}</b><small>rendimento</small></div><div><b>${r.value==null?'—':fmt(r.value)+' M€'}</b><small>valor</small></div></div></div>
  <div class="lobs ${ob?'':'emp'}"><span><i>Rui:</i>${ob?esc(ob):'ainda sem nota — escreva-a na ficha do jogador.'}</span></div></div>
- <div class="lic"><button class="ib x2" data-unmark="${i}" title="Tirar da lista">×</button><button class="ib lde" data-det="${i}" title="Ver em detalhe"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div></div>`}).join('')}
+ <div class="lic"><button class="ib lde" data-det="${i}" title="Ver em detalhe"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button><button class="ib x2" data-unmark="${i}" title="Tirar da lista">×</button></div></div>`}).join('')}
  </div></section>
  <section class="card"><div class="bt btf"><span>Rendimento × custo</span><span class="lpt">Pontos:${[['all','Todos'],['filt','Dentro dos filtros'],['cand','Só candidatos']].map(([v,t])=>`<button data-lp="${v}" class="${lp===v?'on':''}">${t}</button>`).join('')}</span></div><div id="lsc">${scatterSVG(ptsL,R,mv,mr,{w:600,h:430,hl,labels:true,shown:new Set(),all:lp==='cand'?withV:null})}</div>
  <div class="sleg"><span><i style="background:#2547A8"></i>Candidatos</span><span><i style="background:#C9D0D8"></i>Restantes filtrados</span><span><i style="border:3px solid #F5C518"></i>Em visualização</span><span>tracejado: ${lp==='all'?'médio típico':'medianas dos filtrados'}</span></div></section></div>
